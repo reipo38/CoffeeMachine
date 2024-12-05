@@ -18,7 +18,7 @@ public class Statistics {
         return date.getDate() + " : " + (date.getMonth()+1);
     }
 
-    private void addCoffeesToStatistic(ArrayList<Coffee> coffees){
+    protected void addCoffeesToStatistic(ArrayList<Coffee> coffees){
         for (Coffee coffee : coffees){
             dailyStatistic.put(coffee.getName(),0);
         }

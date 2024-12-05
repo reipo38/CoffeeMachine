@@ -2,6 +2,7 @@ package main;
 
 import coffeeMachine.CoffeeMachine;
 import coffeeMachine.ControlPanel;
+import coffeeMachine.Statistics;
 
 public class Main {
     public static void main(String[] args) {
@@ -28,5 +29,7 @@ public class Main {
         coffeeMachine.insertMoney(200);
         coffeeMachine.changeSugarQuantity(true);
         coffeeMachine.buyCoffee(3);
+
+
     }
 }

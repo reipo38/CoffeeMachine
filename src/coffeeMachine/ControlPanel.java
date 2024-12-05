@@ -99,6 +99,7 @@ public class ControlPanel {
 
     public void generateStatistic(){
         Statistics statistic = new Statistics(new Date());
+        statistic.addCoffeesToStatistic(coffeeMachine.getCoffeesList());
         //statistic.(saveToJson)
     }
 }
