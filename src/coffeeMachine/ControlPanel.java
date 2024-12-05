@@ -1,4 +1,5 @@
 package coffeeMachine;
+import java.util.Date;
 
 public class ControlPanel {
     private String moneySymbol = "bgn";
@@ -94,5 +95,10 @@ public class ControlPanel {
 
     public void setMilkNeeded(int milkNeeded) {
         this.milkNeeded = milkNeeded;
+    }
+
+    public void generateStatistic(){
+        Statistics statistic = new Statistics(new Date());
+        //statistic.(saveToJson)
     }
 }

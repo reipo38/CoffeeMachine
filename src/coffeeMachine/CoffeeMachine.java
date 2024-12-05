@@ -93,5 +93,7 @@ public class CoffeeMachine {
     public ControlPanel getControlPanel() {
         return controlPanel;
     }
+
+    protected ArrayList<Coffee> getCoffeesList(){return coffees;}
 }
 
