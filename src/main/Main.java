@@ -1,15 +1,14 @@
 package main;
 
-import java.io.IOException;
-
 import coffee.machine.CoffeeMachine;
 import coffee.machine.ControlPanel;
 import gui.VisualElements;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         CoffeeMachine coffeeMachine = new CoffeeMachine();
         ControlPanel controlPanel = coffeeMachine.getControlPanel();
 
@@ -33,6 +32,8 @@ public class Main {
         coffeeMachine.insertMoney(200);
         coffeeMachine.changeSugarQuantity(true);
         coffeeMachine.buyCoffee(3);
+
+
 
         JPanel panel = new JPanel();
 

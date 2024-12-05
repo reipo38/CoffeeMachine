@@ -3,6 +3,7 @@ package gui;
 import coffee.machine.ControlPanel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +13,9 @@ public class VisualElements {
     private final int WINDOW_WIDTH = 800;
     private final int WINDOW_HEIGHT = 1000;
 
-    private final int ELEMENT_HEIGHT = WINDOW_HEIGHT / 25;
+    private final int ELEMENT_HEIGHT = WINDOW_HEIGHT / 20;
 
-    private final int ELEMENT_LEFT_X = WINDOW_WIDTH / 25;
+    private final int ELEMENT_LEFT_X = WINDOW_WIDTH / 30;
 
     private final String[] LABELS = new String[]{"Output:", "Insert coins (currently X):", "Change sugar (currently X%):", "Coffees:"};
 
@@ -27,6 +28,11 @@ public class VisualElements {
     public VisualElements(JPanel panel, ControlPanel controlPanel) {
         this.panel = panel;
         this.controlPanel = controlPanel;
+
+        Font globalFont = new Font("Arial", Font.PLAIN, 20);
+        UIManager.put("Label.font", globalFont);
+        UIManager.put("Button.font", globalFont);
+        UIManager.put("TextField.font", globalFont);
     }
 
     public void loadVisualElements() {
