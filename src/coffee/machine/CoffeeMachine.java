@@ -1,12 +1,8 @@
-package coffee.machine; // ! ПАКЕТИТЕ СЕ ПИШАТ С МАЛИ БУКВИ
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-import com.fasterxml.jackson.core.exc.StreamWriteException;
-import com.fasterxml.jackson.databind.DatabindException;
+package coffee.machine;
 
 import statistic.Statistics;
+
+import java.util.ArrayList;
 
 public class CoffeeMachine {
 
@@ -38,7 +34,7 @@ public class CoffeeMachine {
         insertedMoney = 0;
     }
 
-    public void buyCoffee(int id) throws StreamWriteException, DatabindException, IOException {
+    public void buyCoffee(int id) {
         Coffee coffee = getCoffeeById(id);
 
         if (coffee == null) {
@@ -50,7 +46,6 @@ public class CoffeeMachine {
             if (hasSufficientMoney(coffee)) {
                 processCoffeePurchase(coffee);
                 dropCoins(insertedMoney - coffee.getPrice());
-
                 Statistics.addCoffeeToDailyStatistic(coffee);
             } else {
                 System.out.println("Not enough money.");
@@ -98,10 +93,15 @@ public class CoffeeMachine {
         return controlPanel.getCoffeeAvailable() >= coffee.getCoffeeNeeded() && ((coffee.hasMilk() && controlPanel.hasEnoughMilk()) || !coffee.hasMilk());
     }
 
+    public int getInsertedMoney() {
+        return insertedMoney;
+    }
+
     public ControlPanel getControlPanel() {
         return controlPanel;
     }
 
-    protected ArrayList<Coffee> getCoffeesList(){return coffees;}
+    public ArrayList<Coffee> getCoffees() {
+        return coffees;
+    }
 }
-

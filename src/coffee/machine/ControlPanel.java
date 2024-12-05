@@ -1,5 +1,6 @@
-package coffee.machine; // ! ПАКЕТИТЕ СЕ ПИШАТ С МАЛИ БУКВИ
-import java.util.Date;
+package coffee.machine;
+
+import java.util.ArrayList;
 
 public class ControlPanel {
     private String moneySymbol = "bgn";
@@ -43,6 +44,16 @@ public class ControlPanel {
             milkAvailable -= milkNeeded;
         }
         sugarAvailable -= sugar;
+    }
+
+    public String[] getCoffeeNames() {
+        ArrayList<Coffee> coffees = coffeeMachine.getCoffees();
+        int numCoffees = coffees.size();
+        String[] coffeeNames = new String[numCoffees];
+        for (int i = 0; i < numCoffees; i++) {
+            coffeeNames[i] = coffees.get(i).getName();
+        }
+        return coffeeNames;
     }
 
     public void addMoney(int amount) {
@@ -96,12 +107,4 @@ public class ControlPanel {
     public void setMilkNeeded(int milkNeeded) {
         this.milkNeeded = milkNeeded;
     }
-
-    // * Статистиката ще се обновява при поръчката на ново кафе
-    // * Това е ненужно
-    // public void generateStatistic(){
-        // Statistics statistic = new Statistics(new Date());
-        // statistic.addCoffeesToStatistic(coffeeMachine.getCoffeesList());
-        //statistic.(saveToJson)
-    // }
 }

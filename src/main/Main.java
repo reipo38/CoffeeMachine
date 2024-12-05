@@ -2,15 +2,14 @@ package main;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.exc.StreamWriteException;
-import com.fasterxml.jackson.databind.DatabindException;
-
 import coffee.machine.CoffeeMachine;
 import coffee.machine.ControlPanel;
-import statistic.Statistics;
+import gui.VisualElements;
+
+import javax.swing.*;
 
 public class Main {
-    public static void main(String[] args) throws StreamWriteException, DatabindException, IOException {
+    public static void main(String[] args) throws IOException {
         CoffeeMachine coffeeMachine = new CoffeeMachine();
         ControlPanel controlPanel = coffeeMachine.getControlPanel();
 
@@ -34,5 +33,19 @@ public class Main {
         coffeeMachine.insertMoney(200);
         coffeeMachine.changeSugarQuantity(true);
         coffeeMachine.buyCoffee(3);
+
+        JPanel panel = new JPanel();
+
+        VisualElements visualElements = new VisualElements(panel, controlPanel);
+
+        JFrame frame = new JFrame("Coffee machine"); // Създаване на основен прозорец
+        frame.setSize(visualElements.WINDOW_WIDTH(), visualElements.WINDOW_HEIGHT()); // Задаване на размер на прозореца
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Определяне на операция при затваряне на прозореца
+        frame.setVisible(true); // Показване на прозореца
+
+        visualElements.loadVisualElements();
+
+        frame.add(panel);
+        panel.setLayout(null); // Без специфичен layout, позволява гъвкаво разположение на компонентите
     }
 }

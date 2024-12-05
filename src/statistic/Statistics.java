@@ -35,20 +35,12 @@ public class Statistics {
     //     }
     // }
 
-    public static void addCoffeeToDailyStatistic(Coffee coffee) throws StreamWriteException, DatabindException, IOException {
-        // if (dailyStatistic.containsKey(coffee.getName())) {
-        //     dailyStatistic.replace(coffee.getName(), dailyStatistic.get(coffee.getName())+1);
-        // }
-
-        // * Може би ще е по-добре да използва id вместо име 
+    public static void addCoffeeToDailyStatistic(Coffee coffee) {
         dailyStatistic.put(coffee.getName(), dailyStatistic.getOrDefault(coffee.getName(), 0) + 1);
         DataHandler.saveStatistics();
     }
 
     public static HashMap<String, Integer> getDailyStatistic() {
-        /*
-         * @return dailyStatistic
-         */
         return dailyStatistic;
     }
 }
