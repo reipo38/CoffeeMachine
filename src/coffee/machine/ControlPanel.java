@@ -1,4 +1,4 @@
-package coffeeMachine;
+package coffee.machine; // ! ПАКЕТИТЕ СЕ ПИШАТ С МАЛИ БУКВИ
 import java.util.Date;
 
 public class ControlPanel {
@@ -97,9 +97,11 @@ public class ControlPanel {
         this.milkNeeded = milkNeeded;
     }
 
-    public void generateStatistic(){
-        Statistics statistic = new Statistics(new Date());
-        statistic.addCoffeesToStatistic(coffeeMachine.getCoffeesList());
+    // * Статистиката ще се обновява при поръчката на ново кафе
+    // * Това е ненужно
+    // public void generateStatistic(){
+        // Statistics statistic = new Statistics(new Date());
+        // statistic.addCoffeesToStatistic(coffeeMachine.getCoffeesList());
         //statistic.(saveToJson)
-    }
+    // }
 }

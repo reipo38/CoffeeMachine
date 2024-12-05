@@ -1,4 +1,4 @@
-package coffeeMachine;
+package coffee.machine; // ! ПАКЕТИТЕ СЕ ПИШАТ С МАЛИ БУКВИ
 
 public class Coffee {
     private String name;

@@ -1,11 +1,16 @@
 package main;
 
-import coffeeMachine.CoffeeMachine;
-import coffeeMachine.ControlPanel;
-import coffeeMachine.Statistics;
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
+
+import coffee.machine.CoffeeMachine;
+import coffee.machine.ControlPanel;
+import statistic.Statistics;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws StreamWriteException, DatabindException, IOException {
         CoffeeMachine coffeeMachine = new CoffeeMachine();
         ControlPanel controlPanel = coffeeMachine.getControlPanel();
 
@@ -29,7 +34,5 @@ public class Main {
         coffeeMachine.insertMoney(200);
         coffeeMachine.changeSugarQuantity(true);
         coffeeMachine.buyCoffee(3);
-
-
     }
 }

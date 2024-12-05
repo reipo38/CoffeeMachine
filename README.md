@@ -1,3 +1,5 @@
 # CoffeeMachine
-# CoffeeMachine
-# CoffeeMachine
+
+## TODO
+* Coffee database
+* Statistics database
