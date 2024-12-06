@@ -5,6 +5,7 @@ import coffee.machine.ControlPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class VisualElements {
@@ -24,12 +25,13 @@ public class VisualElements {
     private ArrayList<ArrayList<String>> BUTTONS_TEXT;
 
     private final JPanel panel;
+    private JTextField outputTextField;
 
     public VisualElements(JPanel panel, ControlPanel controlPanel) {
         this.panel = panel;
         this.controlPanel = controlPanel;
 
-        Font globalFont = new Font("Arial", Font.PLAIN, 20);
+        Font globalFont = new Font("Arial", Font.PLAIN, WINDOW_WIDTH / 40);
         UIManager.put("Label.font", globalFont);
         UIManager.put("Button.font", globalFont);
         UIManager.put("TextField.font", globalFont);
@@ -65,7 +67,7 @@ public class VisualElements {
         int width = (WINDOW_WIDTH - ELEMENT_LEFT_X) / countButtonsPerRow;
         for (int i = 0; i < totalButtons; i++) {
             JButton button = new JButton(BUTTONS_TEXT.get(id).get(i));
-            int yPosition = ELEMENT_HEIGHT*3 + ELEMENT_HEIGHT * 2 * id;
+            int yPosition = ELEMENT_HEIGHT * 3 + ELEMENT_HEIGHT * 2 * id;
             int xPosition = ELEMENT_LEFT_X + (printingCoffees ? i % 2 : i) * width;
             if (printingCoffees) {
                 yPosition += (i / 2) * (ELEMENT_HEIGHT + ELEMENT_HEIGHT / 2);
@@ -76,11 +78,15 @@ public class VisualElements {
     }
 
     private void loadOutputTextField() {
-        JTextField textField = new JTextField();
-        textField.setBounds(ELEMENT_LEFT_X, ELEMENT_HEIGHT, WINDOW_WIDTH - ELEMENT_LEFT_X*2, ELEMENT_HEIGHT);
-        textField.setEditable(false);
-        textField.setFocusable(false);
-        panel.add(textField);
+        outputTextField = new JTextField();
+        outputTextField.setBounds(ELEMENT_LEFT_X, ELEMENT_HEIGHT, WINDOW_WIDTH - ELEMENT_LEFT_X * 2, ELEMENT_HEIGHT);
+        outputTextField.setEditable(false);
+        outputTextField.setFocusable(false);
+        panel.add(outputTextField);
+    }
+    
+    protected void setOutputText(String text) {
+        outputTextField.setText(text);
     }
 
     public int WINDOW_HEIGHT() {

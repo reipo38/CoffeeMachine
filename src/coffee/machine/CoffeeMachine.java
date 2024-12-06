@@ -1,8 +1,11 @@
 package coffee.machine;
 
+import main.Main;
 import statistic.Statistics;
 
 import java.util.ArrayList;
+
+import static main.Main.visualManager;
 
 public class CoffeeMachine {
 
@@ -36,12 +39,11 @@ public class CoffeeMachine {
 
     public void buyCoffee(int id) {
         Coffee coffee = getCoffeeById(id);
-
         if (coffee == null) {
+
             System.out.println("Coffee not found.");
             return;
         }
-
         if (isIngredientsAvailable(coffee)) {
             if (hasSufficientMoney(coffee)) {
                 processCoffeePurchase(coffee);
@@ -61,11 +63,9 @@ public class CoffeeMachine {
     }
 
     private void prepareCoffee(Coffee coffee) {
-        System.out.printf("""
-                Dropping cup.
-                Adding %dg sugar.%s
-                Your %s is finished.
-                """, sugarNeeded, (coffee.hasMilk() ? String.format("%nAdding %dml milk.", controlPanel.getMilkNeeded()) : ""), coffee.getName());
+        Main.visualManager.setOutputText(
+                String.format("Your %s is ready. (%dg coffee, %dml water, %dg sugar%s",
+                        coffee.getName(), coffee.getCoffeeNeeded(), coffee.getWaterNeeded(), sugarNeeded, (coffee.hasMilk() ? String.format(", %dml milk)", controlPanel.getMilkNeeded()) : ")")));
     }
 
     private Coffee getCoffeeById(int id) {
@@ -101,7 +101,7 @@ public class CoffeeMachine {
         return controlPanel;
     }
 
-    public ArrayList<Coffee> getCoffees() {
+    protected ArrayList<Coffee> getCoffees() {
         return coffees;
     }
 }

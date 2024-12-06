@@ -2,16 +2,14 @@ package main;
 
 import coffee.machine.CoffeeMachine;
 import coffee.machine.ControlPanel;
-import gui.VisualElements;
-
-import javax.swing.*;
-import java.awt.*;
+import gui.*;
 
 public class Main {
-    public static void main(String[] args) {
-        CoffeeMachine coffeeMachine = new CoffeeMachine();
-        ControlPanel controlPanel = coffeeMachine.getControlPanel();
+    private static CoffeeMachine coffeeMachine = new CoffeeMachine();
+    private static ControlPanel controlPanel = coffeeMachine.getControlPanel();
+    public static final VisualManager visualManager = new VisualManager(controlPanel);
 
+    public static void main(String[] args) {
         controlPanel.addNewCoffee("Coffee", 70, 50, false, 100);
         controlPanel.addNewCoffee("Coffee Long", 70, 50, false, 150);
         controlPanel.addNewCoffee("Coffee Double", 120, 100, false, 200);
@@ -31,22 +29,10 @@ public class Main {
 
         coffeeMachine.insertMoney(200);
         coffeeMachine.changeSugarQuantity(true);
+
+        visualManager.loadGUI();
+
         coffeeMachine.buyCoffee(3);
 
-
-
-        JPanel panel = new JPanel();
-
-        VisualElements visualElements = new VisualElements(panel, controlPanel);
-
-        JFrame frame = new JFrame("Coffee machine"); // Създаване на основен прозорец
-        frame.setSize(visualElements.WINDOW_WIDTH(), visualElements.WINDOW_HEIGHT()); // Задаване на размер на прозореца
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Определяне на операция при затваряне на прозореца
-        frame.setVisible(true); // Показване на прозореца
-
-        visualElements.loadVisualElements();
-
-        frame.add(panel);
-        panel.setLayout(null); // Без специфичен layout, позволява гъвкаво разположение на компонентите
     }
 }
