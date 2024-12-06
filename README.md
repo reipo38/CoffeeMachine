@@ -3,8 +3,9 @@ Java OOP project simulating a fully functional coffee machine, allowing users to
 
 ## TODO
 * Add more coffee types
-* Link Coffee Loader with Control Panel
+* <strike>Link Coffee Loader with Control Panel</strike>
 * Remove selection squares from buttons
 * <strike>Coffee database</strike>
 * <strike>Statistics database</strike>
+* Irish Coffee plsss
 * KYS (Svetli)

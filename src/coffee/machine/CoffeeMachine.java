@@ -9,12 +9,16 @@ import static main.Main.visualManager;
 
 public class CoffeeMachine {
 
-    private final ArrayList<Coffee> coffees = new ArrayList<>();
+    private final ArrayList<Coffee> coffees;
     private final ControlPanel controlPanel = new ControlPanel(this);
 
     private int sugarNeeded;
 
     private int insertedMoney;
+
+    public CoffeeMachine(ArrayList<Coffee> coffees) {
+        this.coffees = coffees;
+    }
 
     protected void addNewCoffee(Coffee coffee) {
         coffees.add(coffee);
