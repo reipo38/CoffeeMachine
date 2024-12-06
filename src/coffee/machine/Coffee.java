@@ -1,13 +1,24 @@
 package coffee.machine; // ! ПАКЕТИТЕ СЕ ПИШАТ С МАЛИ БУКВИ
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Coffee {
+    
     private String name;
     private int price;
     private int coffeeNeeded;
-    private boolean hasMilk;
+    private boolean hasMilk; // * Направи го int, за да видим колко мляко е необходимо
     private int waterNeeded;
 
-    public Coffee(String name, int price, int needAmountOfCoffee, boolean hasMilk, int waterNeeded) {
+    @JsonCreator
+    public Coffee(
+        @JsonProperty("name") String name, 
+        @JsonProperty("price") int price, 
+        @JsonProperty("coffeeNeeded") int needAmountOfCoffee, 
+        @JsonProperty("hasMilk") boolean hasMilk, 
+        @JsonProperty("waterNeeded") int waterNeeded
+    ) {
         this.name = name;
         this.price = price;
         this.coffeeNeeded = needAmountOfCoffee;

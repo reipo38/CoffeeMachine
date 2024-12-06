@@ -1,20 +1,19 @@
 package data.handler;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import coffee.machine.Coffee;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
+import javax.management.RuntimeErrorException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import coffee.machine.Coffee;
 import statistic.Statistics;
-
-import static com.sun.management.HotSpotDiagnosticMXBean.ThreadDumpFormat.JSON;
 
 public class DataHandler {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -42,6 +41,24 @@ public class DataHandler {
     private static String getDateMonthYear() {
         LocalDateTime now = LocalDateTime.now();
         return now.getMonthValue() + "." + now.getDayOfMonth() + "." + now.getYear();
+    }
+
+    public static ArrayList<Coffee> loadCoffeeTypes() {
+        ArrayList<Coffee> coffeeTypes = new ArrayList<>();
+
+        File coffeeDirectory = new File("data/coffee/");
+        File[] coffeeFiles = coffeeDirectory.listFiles();
+
+        for (File coffeeFile : coffeeFiles) {
+            try {
+                Coffee coffee = objectMapper.readValue(coffeeFile, Coffee.class);
+                coffeeTypes.add(coffee);
+            } catch (IOException e ) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return coffeeTypes;
     }
 
     // private static String loadFile(String path) {
