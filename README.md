@@ -1,4 +1,5 @@
 # CoffeeMachine
+Java OOP project simulating a fully functional coffee machine, allowing users to select coffee types, adjust preferences, and monitor machine status.
 
 ## TODO
 * Add more coffee types
