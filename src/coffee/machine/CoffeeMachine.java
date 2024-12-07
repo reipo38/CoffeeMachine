@@ -56,12 +56,12 @@ public class CoffeeMachine {
     public void returnMoney() {
         if (insertedMoney > 0) {
             Main.visualManager.setOutputText(String.format("Dropping %d%s.", insertedMoney, controlPanel.getMoneySymbol()));
+            insertedMoney = 0;
         }
     }
 
     private void processCoffeePurchase(Coffee coffee) {
-        controlPanel.updateInternalValuesCHANGETHEFUCKINGNAME(coffee, sugarNeeded);
-
+        controlPanel.updateInternalValues(coffee, sugarNeeded);
         prepareCoffee(coffee);
         insertedMoney = 0;
     }

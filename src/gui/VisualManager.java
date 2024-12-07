@@ -5,6 +5,9 @@ import coffee.machine.CoffeeMachine;
 import javax.swing.*;
 import java.awt.*;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class VisualManager {
     private VisualElements visualElements;
     private final CoffeeMachine coffeeMachine;
@@ -18,13 +21,14 @@ public class VisualManager {
         jPanel.setLayout(null); // Без специфичен layout, позволява гъвкаво разположение на компонентите
         visualElements = new VisualElements(jPanel, coffeeMachine);
         initializeUI();
-        visualElements.loadVisualElements();
+        visualElements.loadClientInterface();
         loadFrame(jPanel);
 
     }
 
     public void setOutputText(String text) {
         visualElements.setOutputText(text);
+        clearAfterTimout();
     }
 
     private void loadFrame(JPanel jPanel) {
@@ -41,5 +45,14 @@ public class VisualManager {
         UIManager.put("Label.font", globalFont);
         UIManager.put("Button.font", globalFont);
         UIManager.put("TextArea.font", textAreaFont);
+    }
+
+    private void clearAfterTimout() {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                visualElements.setOutputText("");
+            }
+        }, 5000);
     }
 }

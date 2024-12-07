@@ -12,12 +12,13 @@ public class VisualElements {
     private final ControlPanel controlPanel;
 
     // Constants for layout
-    private static final int WINDOW_WIDTH = 800;
-    private static final int WINDOW_HEIGHT = 1000;
-    private static final int ELEMENT_HEIGHT = WINDOW_HEIGHT / 20;
-    private static final int ELEMENT_LEFT_X = WINDOW_WIDTH / 30;
+    private final int WINDOW_WIDTH = 800;
+    private final int WINDOW_HEIGHT = 1000;
 
-    private static final String[] LABELS_TITLES = {"Output:", "Insert coins (currently 0):", "Change sugar (currently 0%):", "Coffees:"};
+    private int ELEMENT_HEIGHT = WINDOW_HEIGHT / 20;
+    private int ELEMENT_X_OFFSET = WINDOW_WIDTH / 30;
+
+    private final String[] LABELS_TITLES = {"Output:", "Insert coins (currently 0):", "Change sugar (currently 0%):", "Coffees:"};
     private final JLabel[] labels = new JLabel[LABELS_TITLES.length];
 
     private int[] countButtons;
@@ -32,7 +33,7 @@ public class VisualElements {
         this.controlPanel = coffeeMachine.getControlPanel();
     }
 
-    public void loadVisualElements() {
+    protected void loadClientInterface() {
         BUTTONS_TEXT = createButtonsText();
         countButtons = new int[]{7, 2, BUTTONS_TEXT.get(2).size()};
 
@@ -42,6 +43,11 @@ public class VisualElements {
         }
         loadLabel(3);  // Етикетите са с един повече от бутоните. За това се налага да се зареди последният етикет (Coffees.)
         loadOutputTextField();
+        loadAdminButton();
+    }
+
+    protected void setOutputText(String text) {
+        outputTextField.setText(text);
     }
 
     private ArrayList<ArrayList<String>> createButtonsText() {
@@ -54,7 +60,7 @@ public class VisualElements {
 
     private void loadLabel(int id) {
         JLabel label = new JLabel(LABELS_TITLES[id]);
-        label.setBounds(ELEMENT_LEFT_X, ELEMENT_HEIGHT + ELEMENT_HEIGHT * 2 * id - ELEMENT_HEIGHT / 2, 400, ELEMENT_HEIGHT / 2);
+        label.setBounds(ELEMENT_X_OFFSET, ELEMENT_HEIGHT + ELEMENT_HEIGHT * 2 * id - ELEMENT_HEIGHT / 2, 400, ELEMENT_HEIGHT / 2);
         labels[id] = label;
         panel.add(label);
     }
@@ -63,7 +69,7 @@ public class VisualElements {
         boolean isCoffeeButton = id == 2;
         int countButtonsPerRow = isCoffeeButton ? 2 : countButtons[id];
         int totalButtons = countButtons[id];
-        int width = (WINDOW_WIDTH - ELEMENT_LEFT_X) / countButtonsPerRow;
+        int width = (WINDOW_WIDTH - ELEMENT_X_OFFSET) / countButtonsPerRow;
 
         for (int i = 0; i < totalButtons; i++) {
             JButton button = createButton(id, i, isCoffeeButton, width);
@@ -74,11 +80,11 @@ public class VisualElements {
     private JButton createButton(int id, int i, boolean isCoffeeButton, int width) {
         JButton button = new JButton(BUTTONS_TEXT.get(id).get(i));
         int yPosition = ELEMENT_HEIGHT * 3 + ELEMENT_HEIGHT * 2 * id;
-        int xPosition = ELEMENT_LEFT_X + (isCoffeeButton ? i % 2 : i) * width;
+        int xPosition = ELEMENT_X_OFFSET + (isCoffeeButton ? i % 2 : i) * width;
         if (isCoffeeButton) {
             yPosition += (i / 2) * (ELEMENT_HEIGHT + ELEMENT_HEIGHT / 2);
         }
-        button.setBounds(xPosition, yPosition, width - ELEMENT_LEFT_X, ELEMENT_HEIGHT);
+        button.setBounds(xPosition, yPosition, width - ELEMENT_X_OFFSET, ELEMENT_HEIGHT);
         button.addActionListener(_ -> buttonAction(id, i));
         return button;
     }
@@ -113,14 +119,24 @@ public class VisualElements {
 
     private void loadOutputTextField() {
         outputTextField = new JTextArea();
-        outputTextField.setBounds(ELEMENT_LEFT_X, ELEMENT_HEIGHT, WINDOW_WIDTH - ELEMENT_LEFT_X * 2, ELEMENT_HEIGHT);
+        outputTextField.setBounds(ELEMENT_X_OFFSET, ELEMENT_HEIGHT, WINDOW_WIDTH - ELEMENT_X_OFFSET * 2, ELEMENT_HEIGHT);
         outputTextField.setEditable(false);
         outputTextField.setFocusable(false);
         panel.add(outputTextField);
     }
 
-    protected void setOutputText(String text) {
-        outputTextField.setText(text);
+    private void loadAdminButton() {
+        JButton button = new JButton("Admin Menu");
+        int width = WINDOW_WIDTH/5;
+        int xPosition = WINDOW_WIDTH - width - ELEMENT_X_OFFSET;
+        int yPosition = WINDOW_HEIGHT - ELEMENT_HEIGHT*2;
+        button.setBounds(xPosition, yPosition, width, ELEMENT_HEIGHT);
+        button.addActionListener(_ -> loadAdminInterface());
+        panel.add(button);
+    }
+
+    private void loadAdminInterface() {
+        //TO DO
     }
 
     public int getWindowHeight() {

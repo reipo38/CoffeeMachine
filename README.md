@@ -3,6 +3,7 @@ Java OOP project simulating a fully functional coffee machine, allowing users to
 
 ## TODO
 * Add more coffee types
+* Add admin interface
 * <strike>Link Coffee Loader with Control Panel</strike>
 * Remove selection squares from buttons
 * <strike>Coffee database</strike>

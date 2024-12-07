@@ -34,7 +34,7 @@ public class ControlPanel {
         return milkAvailable >= milkNeeded;
     }
 
-    public void updateInternalValuesCHANGETHEFUCKINGNAME(Coffee coffee, int sugar) {
+    public void updateInternalValues(Coffee coffee, int sugar) {
         moneyAvailable += coffee.getPrice();
         coffeeAvailable -= coffee.getCoffeeNeeded();
         waterAvailable -= coffee.getWaterNeeded();
