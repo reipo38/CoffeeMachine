@@ -85,7 +85,7 @@ public class VisualElements {
             yPosition += (i / 2) * (ELEMENT_HEIGHT + ELEMENT_HEIGHT / 2);
         }
         button.setBounds(xPosition, yPosition, width - ELEMENT_X_OFFSET, ELEMENT_HEIGHT);
-        button.addActionListener(_ -> buttonAction(id, i));
+        button.addActionListener(e -> buttonAction(id, i)); //"_" се използва за Java 9.0 и надолу
         return button;
     }
 
@@ -131,7 +131,7 @@ public class VisualElements {
         int xPosition = WINDOW_WIDTH - width - ELEMENT_X_OFFSET;
         int yPosition = WINDOW_HEIGHT - ELEMENT_HEIGHT*2;
         button.setBounds(xPosition, yPosition, width, ELEMENT_HEIGHT);
-        button.addActionListener(_ -> loadAdminInterface());
+        button.addActionListener(e -> loadAdminInterface()); //"_" се използва за Java 9.0 и надолу
         panel.add(button);
     }
 
