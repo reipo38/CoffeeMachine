@@ -1,7 +1,5 @@
 package coffee.machine;
 
-import java.util.ArrayList;
-
 public class ControlPanel {
     private String moneySymbol = "bgn";
 
@@ -46,16 +44,6 @@ public class ControlPanel {
         sugarAvailable -= sugar;
     }
 
-    public String[] getCoffeeNames() {
-        ArrayList<Coffee> coffees = coffeeMachine.getCoffees();
-        int numCoffees = coffees.size();
-        String[] coffeeNames = new String[numCoffees];
-        for (int i = 0; i < numCoffees; i++) {
-            coffeeNames[i] = coffees.get(i).getName();
-        }
-        return coffeeNames;
-    }
-
     public void addMoney(int amount) {
         moneyAvailable += amount;
     }
@@ -86,6 +74,7 @@ public class ControlPanel {
 
     public void setSugarMax(int sugarMax) {
         this.sugarMax = sugarMax;
+        sugarChangeBy = sugarMax/5;
     }
 
     public int getSugarChangeBy() {

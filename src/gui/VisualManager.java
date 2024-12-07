@@ -1,23 +1,26 @@
 package gui;
 
-import coffee.machine.ControlPanel;
+import coffee.machine.CoffeeMachine;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class VisualManager {
     private VisualElements visualElements;
-    private ControlPanel controlPanel;
+    private final CoffeeMachine coffeeMachine;
 
-    public VisualManager(ControlPanel controlPanel) {
-        this.controlPanel = controlPanel;
+    public VisualManager(CoffeeMachine coffeeMachine) {
+        this.coffeeMachine = coffeeMachine;
     }
 
     public void loadGUI() {
         JPanel jPanel = new JPanel();
         jPanel.setLayout(null); // Без специфичен layout, позволява гъвкаво разположение на компонентите
-        visualElements = new VisualElements(jPanel, controlPanel);
+        visualElements = new VisualElements(jPanel, coffeeMachine);
+        initializeUI();
         visualElements.loadVisualElements();
         loadFrame(jPanel);
+
     }
 
     public void setOutputText(String text) {
@@ -26,9 +29,17 @@ public class VisualManager {
 
     private void loadFrame(JPanel jPanel) {
         JFrame frame = new JFrame("Coffee machine"); // Създаване на основен прозорец
-        frame.setSize(visualElements.WINDOW_WIDTH(), visualElements.WINDOW_HEIGHT()); // Задаване на размер на прозореца
+        frame.setSize(visualElements.getWindowWidth(), visualElements.getWindowHeight()); // Задаване на размер на прозореца
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Определяне на операция при затваряне на прозореца
         frame.setVisible(true); // Показване на прозореца
         frame.add(jPanel);
+    }
+
+    private void initializeUI() {
+        Font globalFont = new Font("Arial", Font.PLAIN, visualElements.getWindowWidth() / 40);
+        Font textAreaFont = new Font("Arial", Font.PLAIN, visualElements.getWindowWidth() / 50);
+        UIManager.put("Label.font", globalFont);
+        UIManager.put("Button.font", globalFont);
+        UIManager.put("TextArea.font", textAreaFont);
     }
 }

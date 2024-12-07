@@ -6,9 +6,9 @@ import data.handler.DataHandler;
 import gui.*;
 
 public class Main {
-    private static CoffeeMachine coffeeMachine = new CoffeeMachine(DataHandler.loadCoffeeTypes());
-    private static ControlPanel controlPanel = coffeeMachine.getControlPanel();
-    public static final VisualManager visualManager = new VisualManager(controlPanel);
+    private static final CoffeeMachine coffeeMachine = new CoffeeMachine(DataHandler.loadCoffeeTypes());
+    private static final ControlPanel controlPanel = coffeeMachine.getControlPanel();
+    public static final VisualManager visualManager = new VisualManager(coffeeMachine);
 
     public static void main(String[] args) {
         // controlPanel.addNewCoffee("Coffee", 70, 50, false, 100);
@@ -18,22 +18,14 @@ public class Main {
         // controlPanel.addNewCoffee("Machiatto", 140, 40, true, 100);
         // controlPanel.addNewCoffee("Cappuccino", 140, 40, true, 100);
 
-        controlPanel.addMoney(1000);
         controlPanel.addCoffee(1000);
         controlPanel.addSugar(1000);
         controlPanel.addMilk(1000);
         controlPanel.addWater(1000);
 
-        controlPanel.setSugarChangeBy(5);
-        controlPanel.setSugarMax(20);
+        controlPanel.setSugarMax(25);
         controlPanel.setMilkNeeded(25);
 
-        coffeeMachine.insertMoney(200);
-        coffeeMachine.changeSugarQuantity(true);
-
         visualManager.loadGUI();
-
-        coffeeMachine.buyCoffee(0);
-
     }
 }
