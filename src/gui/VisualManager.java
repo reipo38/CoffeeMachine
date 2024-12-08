@@ -33,8 +33,8 @@ public class VisualManager {
     }
 
     public void loadGUI() {
-        //loadClientInterface();
-        adminInterface.loadAdminInterface();
+        clientInterface.loadClientInterface();
+        //adminInterface.loadAdminInterface();
         loadOutputArea();
         loadChangeRegimeButton();
         loadFrame();
@@ -62,10 +62,6 @@ public class VisualManager {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         frame.setVisible(true);
-    }
-
-    private void loadClientInterface() {
-        clientInterface.loadClientInterface();
     }
 
     private void loadOutputArea() {
