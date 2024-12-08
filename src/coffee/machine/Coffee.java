@@ -45,4 +45,9 @@ public class Coffee {
     public boolean hasMilk() {
         return hasMilk;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
