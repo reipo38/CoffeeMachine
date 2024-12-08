@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Coffee",
+        "price": 70,
+        "coffeeNeeded": 50,
+        "hasMilk": false,
+        "waterNeeded": 100
+    },
+    {
+        "name": "Coffee_DELETETHIS",
+        "price": 70,
+        "coffeeNeeded": 50,
+        "hasMilk": false,
+        "waterNeeded": 100
+    }
+]
