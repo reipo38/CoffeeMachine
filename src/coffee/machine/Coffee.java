@@ -10,6 +10,7 @@ public class Coffee {
     private int coffeeNeeded;
     private boolean hasMilk; // * Направи го int, за да видим колко мляко е необходимо
     private int waterNeeded;
+    private boolean alcoholNeeded;
 
     @JsonCreator
     public Coffee(
@@ -17,13 +18,15 @@ public class Coffee {
         @JsonProperty("price") int price, 
         @JsonProperty("coffeeNeeded") int needAmountOfCoffee, 
         @JsonProperty("hasMilk") boolean hasMilk, 
-        @JsonProperty("waterNeeded") int waterNeeded
+        @JsonProperty("waterNeeded") int waterNeeded,
+        @JsonProperty("alcoholNeeded") boolean alcoholNeeded
     ) {
         this.name = name;
         this.price = price;
         this.coffeeNeeded = needAmountOfCoffee;
         this.hasMilk = hasMilk;
         this.waterNeeded = waterNeeded;
+        this.alcoholNeeded = alcoholNeeded;
     }
 
     public String getName() {
@@ -46,8 +49,7 @@ public class Coffee {
         return hasMilk;
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public boolean isAlcoholNeeded() {
+        return alcoholNeeded;
     }
 }

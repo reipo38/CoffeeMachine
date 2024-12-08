@@ -1,73 +1,81 @@
 package coffee.machine;
 
-import java.util.ArrayList;
-
 public class ControlPanel {
     private String moneySymbol = "bgn";
 
     private CoffeeMachine coffeeMachine;
+    private int moneyAvailable;
 
-    /*
-        indices:
-            0 - money
-            1 - coffee
-            2 - milk
-            3 - water
-            4 - sugar
-     */
+    private int coffeeAvailable;
 
-    private int[] consumablesAvailable = new int[5];
+    private int waterAvailable;
 
+    private int milkAvailable;
     private int milkNeeded;
 
+    private int alcoholAvailable;
+    private int alcoholNeeded;
+
     private int sugarChangeBy;
+    private int sugarAvailable;
     private int sugarMax;
 
     public ControlPanel(CoffeeMachine coffeeMachine) {
         this.coffeeMachine = coffeeMachine;
     }
 
-    public void addNewCoffee(String coffeeType, int price, int needAmountOfCoffee, boolean hasMilk, int waterNeeded) {
-        coffeeMachine.addNewCoffee(new Coffee(coffeeType, price, needAmountOfCoffee, hasMilk, waterNeeded));
+    public void addNewCoffee(String coffeeType, int price, int needAmountOfCoffee, boolean hasMilk, int waterNeeded, boolean alcoholNeeded) {
+        coffeeMachine.addNewCoffee(new Coffee(coffeeType, price, needAmountOfCoffee, hasMilk, waterNeeded, alcoholNeeded));
     }
 
     public void withdrawMoney(int amount) {
         System.out.printf("Withdrawing %d%s.", amount, moneySymbol);
-        consumablesAvailable[0] -= amount;
+        moneyAvailable -= amount;
     }
 
     public boolean hasEnoughMilk(){
-        return consumablesAvailable[2] >= milkNeeded;
+        return milkAvailable >= milkNeeded;
+    }
+
+    public boolean hasEnoughAlcohol(){
+        return alcoholAvailable >= alcoholNeeded;
     }
 
     public void updateInternalValues(Coffee coffee, int sugar) {
-        consumablesAvailable[0] += coffee.getPrice();
-        consumablesAvailable[1] -= coffee.getCoffeeNeeded();
+        moneyAvailable += coffee.getPrice();
+        coffeeAvailable -= coffee.getCoffeeNeeded();
+        waterAvailable -= coffee.getWaterNeeded();
         if (coffee.hasMilk()) {
-            consumablesAvailable[2] -= milkNeeded;
+            milkAvailable -= milkNeeded;
         }
-        consumablesAvailable[3] -= coffee.getWaterNeeded();
-        consumablesAvailable[4] -= sugar;
+        sugarAvailable -= sugar;
+        if (coffee.isAlcoholNeeded()) {
+            alcoholAvailable -= alcoholNeeded;
+        }
     }
 
     public void addMoney(int amount) {
-        consumablesAvailable[0] += amount;
+        moneyAvailable += amount;
     }
 
     public void addSugar(int amount) {
-        consumablesAvailable[4] += amount;
+        sugarAvailable += amount;
     }
 
     public void addCoffee(int amount) {
-        consumablesAvailable[1] += amount;
+        coffeeAvailable += amount;
     }
 
     public void addMilk(int amount) {
-        consumablesAvailable[2] += amount;
+        milkAvailable += amount;
+    }
+
+    public void addAlcohol(int amount) {
+        alcoholAvailable += amount;
     }
 
     public void addWater(int amount) {
-        consumablesAvailable[3] += amount;
+        waterAvailable += amount;
     }
 
     public String getMoneySymbol() {
@@ -87,8 +95,12 @@ public class ControlPanel {
         return sugarChangeBy;
     }
 
+    public void setSugarChangeBy(int sugarChangeBy) {
+        this.sugarChangeBy = sugarChangeBy;
+    }
+
     public int getCoffeeAvailable() {
-        return consumablesAvailable[1];
+        return coffeeAvailable;
     }
 
     public int getMilkNeeded() {
@@ -99,15 +111,11 @@ public class ControlPanel {
         this.milkNeeded = milkNeeded;
     }
 
-    public String[] getConsumablesNames() {
-        return new String[]{"Money", "Coffee", "Water", "Milk", "Sugar"};
+    public int getAlcoholNeeded() {
+        return alcoholNeeded;
     }
 
-    public int getConsumableValue(int id) {
-        return consumablesAvailable[id];
-    }
-
-    public String[] getCoffeeNames() {
-        return coffeeMachine.getCoffeeNames();
+    public void setAlcoholNeeded(int alcoholNeeded) {
+        this.alcoholNeeded = alcoholNeeded;
     }
 }

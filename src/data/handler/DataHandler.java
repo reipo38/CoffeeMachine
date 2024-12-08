@@ -8,8 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.management.RuntimeErrorException;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import coffee.machine.Coffee;
@@ -18,6 +17,7 @@ import statistic.Statistics;
 public class DataHandler {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Path consumablesPath = Paths.get("data/consumables.json");
+    private static final Path coffeesPath = Paths.get("data/coffees.json");
 
     public static void saveStatistics() {
         Path statisticsPath = Paths.get("data/statistics/" + getDateMonthYear() + ".json");
@@ -44,18 +44,15 @@ public class DataHandler {
     }
 
     public static ArrayList<Coffee> loadCoffeeTypes() {
-        ArrayList<Coffee> coffeeTypes = new ArrayList<>();
+        // File coffeeDirectory = new File("data/coffee/");
+        // File[] coffeeFiles = coffeeDirectory.listFiles();
 
-        File coffeeDirectory = new File("data/coffee/");
-        File[] coffeeFiles = coffeeDirectory.listFiles();
+        ArrayList<Coffee> coffeeTypes;
 
-        for (File coffeeFile : coffeeFiles) {
-            try {
-                Coffee coffee = objectMapper.readValue(coffeeFile, Coffee.class);
-                coffeeTypes.add(coffee);
-            } catch (IOException e ) {
-                throw new RuntimeException(e);
-            }
+        try {
+            coffeeTypes = objectMapper.readValue(new File(coffeesPath.toString()), new TypeReference<ArrayList<Coffee>>() {});
+        } catch (IOException e ) {
+            throw new RuntimeException(e);
         }
 
         return coffeeTypes;

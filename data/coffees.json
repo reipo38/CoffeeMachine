@@ -1,0 +1,58 @@
+[
+    {
+        "name": "Coffee",
+        "price": 70,
+        "coffeeNeeded": 50,
+        "hasMilk": false,
+        "waterNeeded": 100,
+        "alcoholNeeded": false
+    },
+    {
+        "name": "Coffee Long",
+        "price": 70,
+        "coffeeNeeded": 50,
+        "hasMilk": false,
+        "waterNeeded": 150,
+        "alcoholNeeded": false
+    },
+    {
+        "name": "Coffee Double",
+        "price": 120,
+        "coffeeNeeded": 100,
+        "hasMilk": false,
+        "waterNeeded": 200,
+        "alcoholNeeded": false
+    },
+    {
+        "name": "Coffee with milk",
+        "price": 120,
+        "coffeeNeeded": 50,
+        "hasMilk": true,
+        "waterNeeded": 100,
+        "alcoholNeeded": false
+    },
+    {
+        "name": "Machiatto",
+        "price": 140,
+        "coffeeNeeded": 40,
+        "hasMilk": true,
+        "waterNeeded": 100,
+        "alcoholNeeded": false
+    },
+    {
+        "name": "Cappuccino",
+        "price": 140,
+        "coffeeNeeded": 40,
+        "hasMilk": true,
+        "waterNeeded": 100,
+        "alcoholNeeded": false
+    },
+    {
+        "name": "Irish Coffee",
+        "price": 180,
+        "coffeeNeeded": 40,
+        "hasMilk": false,
+        "waterNeeded": 100,
+        "alcoholNeeded": true
+    }
+]
