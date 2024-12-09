@@ -4,6 +4,7 @@ import coffee.machine.ControlPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class AdminInterface {
     private final ControlPanel controlPanel;
@@ -13,7 +14,7 @@ public class AdminInterface {
     private final int elementXOffset;
 
     private String[] consumablesNames;
-    private int[] numberOfComponents = new int[]{4, 2};
+    private int[] numberOfComponents = new int[]{4, 2, 2, 4};
 
     private String[] labelsTitles = new String[]{"Add/ Remove consumable:", "Delete Coffee:", "Add new Coffee:", "Statistics:"};
 
@@ -34,6 +35,8 @@ public class AdminInterface {
         loadLabels();
         loadComponents(0);
         loadComponents(1);
+        loadComponents(2);
+        loadComponents(3);
     }
 
     private void loadConsumables() {
@@ -61,6 +64,8 @@ public class AdminInterface {
             Component component = switch (id) {
                 case 0 -> loadComponents(Math.min(i, 2), i-2);
                 case 1 -> loadComponents(i == 0 ? 0 : 2, i);
+                case 2 -> loadComponents(i+1, 0);
+                case 3 -> loadComponents(1, 0);
                 default -> throw new IllegalStateException("Unexpected value: " + id);
             };
             component.setBounds(elementXOffset + width * i, yPosition, width - elementXOffset, elementHeight);
@@ -72,9 +77,17 @@ public class AdminInterface {
         return switch (type) {
             case 0 -> getComboBox(id);   // Get ComboBox for type 0
             case 1 -> new JTextField();  // Get JTextField for type 1
-            case 2 -> new JButton(buttonsText[id]);  // Get JButton for type 2
+            case 2 -> {
+                JButton button = new JButton(buttonsText[id]);
+                button.addActionListener(e -> handleButtonAction(id));
+                yield button;
+            }  // Get JButton for type 2
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
+    }
+
+    private void handleButtonAction(int id) {
+        //case 0 ->
     }
 
     // Method to create ComboBox based on id

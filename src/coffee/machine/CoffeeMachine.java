@@ -103,7 +103,7 @@ public class CoffeeMachine {
         int numCoffees = coffees.size();
         String[] coffeeNames = new String[numCoffees];
         for (int i = 0; i < numCoffees; i++) {
-            coffeeNames[i] = coffees.get(i).getName();
+            coffeeNames[i] = String.format("%s - %d%s", coffees.get(i).getName(), coffees.get(i).getPrice(), controlPanel.getMoneySymbol());
         }
         return coffeeNames;
     }

@@ -1,7 +1,0 @@
-{
-    "name": "Coffee",
-    "price": 70,
-    "coffeeNeeded": 50,
-    "hasMilk": false,
-    "waterNeeded": 100
-}
