@@ -1,81 +1,73 @@
 package coffee.machine;
 
+import java.util.ArrayList;
+
 public class ControlPanel {
     private String moneySymbol = "bgn";
 
     private CoffeeMachine coffeeMachine;
-    private int moneyAvailable;
 
-    private int coffeeAvailable;
+    /*
+        indices:
+            0 - money
+            1 - coffee
+            2 - milk
+            3 - water
+            4 - sugar
+     */
 
-    private int waterAvailable;
+    private int[] consumablesAvailable = new int[5];
 
-    private int milkAvailable;
     private int milkNeeded;
 
-    private int alcoholAvailable;
-    private int alcoholNeeded;
-
     private int sugarChangeBy;
-    private int sugarAvailable;
     private int sugarMax;
 
     public ControlPanel(CoffeeMachine coffeeMachine) {
         this.coffeeMachine = coffeeMachine;
     }
 
-    public void addNewCoffee(String coffeeType, int price, int needAmountOfCoffee, boolean hasMilk, int waterNeeded, boolean alcoholNeeded) {
-        coffeeMachine.addNewCoffee(new Coffee(coffeeType, price, needAmountOfCoffee, hasMilk, waterNeeded, alcoholNeeded));
+    public void addNewCoffee(String coffeeType, int price, int needAmountOfCoffee, boolean hasMilk, int waterNeeded) {
+        coffeeMachine.addNewCoffee(new Coffee(coffeeType, price, needAmountOfCoffee, hasMilk, waterNeeded));
     }
 
     public void withdrawMoney(int amount) {
         System.out.printf("Withdrawing %d%s.", amount, moneySymbol);
-        moneyAvailable -= amount;
+        consumablesAvailable[0] -= amount;
     }
 
     public boolean hasEnoughMilk(){
-        return milkAvailable >= milkNeeded;
-    }
-
-    public boolean hasEnoughAlcohol(){
-        return alcoholAvailable >= alcoholNeeded;
+        return consumablesAvailable[2] >= milkNeeded;
     }
 
     public void updateInternalValues(Coffee coffee, int sugar) {
-        moneyAvailable += coffee.getPrice();
-        coffeeAvailable -= coffee.getCoffeeNeeded();
-        waterAvailable -= coffee.getWaterNeeded();
+        consumablesAvailable[0] += coffee.getPrice();
+        consumablesAvailable[1] -= coffee.getCoffeeNeeded();
         if (coffee.hasMilk()) {
-            milkAvailable -= milkNeeded;
+            consumablesAvailable[2] -= milkNeeded;
         }
-        sugarAvailable -= sugar;
-        if (coffee.isAlcoholNeeded()) {
-            alcoholAvailable -= alcoholNeeded;
-        }
+        consumablesAvailable[3] -= coffee.getWaterNeeded();
+        consumablesAvailable[4] -= sugar;
     }
 
     public void addMoney(int amount) {
-        moneyAvailable += amount;
+        consumablesAvailable[0] += amount;
     }
 
     public void addSugar(int amount) {
-        sugarAvailable += amount;
+        consumablesAvailable[4] += amount;
     }
 
     public void addCoffee(int amount) {
-        coffeeAvailable += amount;
+        consumablesAvailable[1] += amount;
     }
 
     public void addMilk(int amount) {
-        milkAvailable += amount;
-    }
-
-    public void addAlcohol(int amount) {
-        alcoholAvailable += amount;
+        consumablesAvailable[2] += amount;
     }
 
     public void addWater(int amount) {
-        waterAvailable += amount;
+        consumablesAvailable[3] += amount;
     }
 
     public String getMoneySymbol() {
@@ -95,12 +87,8 @@ public class ControlPanel {
         return sugarChangeBy;
     }
 
-    public void setSugarChangeBy(int sugarChangeBy) {
-        this.sugarChangeBy = sugarChangeBy;
-    }
-
     public int getCoffeeAvailable() {
-        return coffeeAvailable;
+        return consumablesAvailable[1];
     }
 
     public int getMilkNeeded() {
@@ -111,11 +99,15 @@ public class ControlPanel {
         this.milkNeeded = milkNeeded;
     }
 
-    public int getAlcoholNeeded() {
-        return alcoholNeeded;
+    public String[] getConsumablesNames() {
+        return new String[]{"Money", "Coffee", "Water", "Milk", "Sugar"};
     }
 
-    public void setAlcoholNeeded(int alcoholNeeded) {
-        this.alcoholNeeded = alcoholNeeded;
+    public int getConsumableValue(int id) {
+        return consumablesAvailable[id];
+    }
+
+    public String[] getCoffeeNames() {
+        return coffeeMachine.getCoffeeNames();
     }
 }

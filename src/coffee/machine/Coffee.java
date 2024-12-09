@@ -18,15 +18,13 @@ public class Coffee {
         @JsonProperty("price") int price, 
         @JsonProperty("coffeeNeeded") int needAmountOfCoffee, 
         @JsonProperty("hasMilk") boolean hasMilk, 
-        @JsonProperty("waterNeeded") int waterNeeded,
-        @JsonProperty("alcoholNeeded") boolean alcoholNeeded
+        @JsonProperty("waterNeeded") int waterNeeded
     ) {
         this.name = name;
         this.price = price;
         this.coffeeNeeded = needAmountOfCoffee;
         this.hasMilk = hasMilk;
         this.waterNeeded = waterNeeded;
-        this.alcoholNeeded = alcoholNeeded;
     }
 
     public String getName() {

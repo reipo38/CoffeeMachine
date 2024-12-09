@@ -1,0 +1,120 @@
+Index: data/coffee/Coffee.json
+===================================================================
+diff --git a/data/coffee/Coffee.json b/data/coffee/Coffee.json
+deleted file mode 100644
+--- a/data/coffee/Coffee.json	(revision 375a0583da9aef03e530db0bd99ca9f35b5173ed)
++++ /dev/null	(revision 375a0583da9aef03e530db0bd99ca9f35b5173ed)
+@@ -1,7 +0,0 @@
+-{
+-    "name": "Coffee",
+-    "price": 70,
+-    "coffeeNeeded": 50,
+-    "hasMilk": false,
+-    "waterNeeded": 100
+-}
+\ No newline at end of file
+Index: data/statisticsexample.json
+===================================================================
+diff --git a/data/statisticsexample.json b/data/statisticsexample.json
+deleted file mode 100644
+--- a/data/statisticsexample.json	(revision 375a0583da9aef03e530db0bd99ca9f35b5173ed)
++++ /dev/null	(revision 375a0583da9aef03e530db0bd99ca9f35b5173ed)
+@@ -1,1 +0,0 @@
+-{"Machiatto":2,"Coffee Long":3,"Coffee Double":1,"Coffee":3,"Coffee with milk":2,"Cappuccino":2}
+\ No newline at end of file
+Index: data/statistics/12.8.2024.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\"Coffee\":2}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/data/statistics/12.8.2024.json b/data/statistics/12.8.2024.json
+--- a/data/statistics/12.8.2024.json	(revision 375a0583da9aef03e530db0bd99ca9f35b5173ed)
++++ b/data/statistics/12.8.2024.json	(date 1733667612096)
+@@ -1,1 +1,1 @@
+-{"Coffee":2}
+\ No newline at end of file
++{"CoffeeTest":5,"Coffee":2}
+\ No newline at end of file
+Index: src/data/handler/DataHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package data.handler;\n\nimport java.io.File;\nimport java.io.IOException;\nimport java.nio.file.Path;\nimport java.nio.file.Paths;\nimport java.time.LocalDateTime;\nimport java.util.ArrayList;\nimport java.util.HashMap;\n\nimport javax.management.RuntimeErrorException;\n\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\nimport coffee.machine.Coffee;\nimport statistic.Statistics;\n\npublic class DataHandler {\n    private static final ObjectMapper objectMapper = new ObjectMapper();\n    private static final Path consumablesPath = Paths.get(\"data/consumables.json\");\n\n    public static void saveStatistics() {\n        Path statisticsPath = Paths.get(\"data/statistics/\" + getDateMonthYear() + \".json\");\n        HashMap<String, Integer> statistics = Statistics.getDailyStatistic();\n        try {\n            objectMapper.writeValue(new File(statisticsPath.toString()), statistics);\n        } catch (IOException e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    public static HashMap<String,Object> loadConsumables() {\n        try {\n            HashMap<String, Object> consumablesHashMap = objectMapper.readValue(new File(consumablesPath.toString()), HashMap.class);\n            return consumablesHashMap;\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n    }\n\n    private static String getDateMonthYear() {\n        LocalDateTime now = LocalDateTime.now();\n        return now.getMonthValue() + \".\" + now.getDayOfMonth() + \".\" + now.getYear();\n    }\n\n    public static ArrayList<Coffee> loadCoffeeTypes() {\n        ArrayList<Coffee> coffeeTypes = new ArrayList<>();\n\n        File coffeeDirectory = new File(\"data/coffee/\");\n        File[] coffeeFiles = coffeeDirectory.listFiles();\n\n        for (File coffeeFile : coffeeFiles) {\n            try {\n                Coffee coffee = objectMapper.readValue(coffeeFile, Coffee.class);\n                coffeeTypes.add(coffee);\n            } catch (IOException e ) {\n                throw new RuntimeException(e);\n            }\n        }\n\n        return coffeeTypes;\n    }\n\n    // private static String loadFile(String path) {\n    //     try {\n    //         File file = new File(path);\n    //         FileReader fr = new FileReader(file);\n    //         BufferedReader readFile = new BufferedReader(fr);\n\n    //         return readFile.toString();\n\n    //     } catch (FileNotFoundException e) {\n    //         throw new RuntimeException(e);\n    //     }\n\n    // }\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/data/handler/DataHandler.java b/src/data/handler/DataHandler.java
+--- a/src/data/handler/DataHandler.java	(revision 375a0583da9aef03e530db0bd99ca9f35b5173ed)
++++ b/src/data/handler/DataHandler.java	(date 1733667595106)
+@@ -8,8 +8,7 @@
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ 
+-import javax.management.RuntimeErrorException;
+-
++import com.fasterxml.jackson.core.type.TypeReference;
+ import com.fasterxml.jackson.databind.ObjectMapper;
+ 
+ import coffee.machine.Coffee;
+@@ -18,6 +17,7 @@
+ public class DataHandler {
+     private static final ObjectMapper objectMapper = new ObjectMapper();
+     private static final Path consumablesPath = Paths.get("data/consumables.json");
++    private static final Path coffeesPath = Paths.get("data/coffees.json");
+ 
+     public static void saveStatistics() {
+         Path statisticsPath = Paths.get("data/statistics/" + getDateMonthYear() + ".json");
+@@ -44,18 +44,15 @@
+     }
+ 
+     public static ArrayList<Coffee> loadCoffeeTypes() {
+-        ArrayList<Coffee> coffeeTypes = new ArrayList<>();
++        // File coffeeDirectory = new File("data/coffee/");
++        // File[] coffeeFiles = coffeeDirectory.listFiles();
+ 
+-        File coffeeDirectory = new File("data/coffee/");
+-        File[] coffeeFiles = coffeeDirectory.listFiles();
++        ArrayList<Coffee> coffeeTypes;
+ 
+-        for (File coffeeFile : coffeeFiles) {
+-            try {
+-                Coffee coffee = objectMapper.readValue(coffeeFile, Coffee.class);
+-                coffeeTypes.add(coffee);
+-            } catch (IOException e ) {
+-                throw new RuntimeException(e);
+-            }
++        try {
++            coffeeTypes = objectMapper.readValue(new File(coffeesPath.toString()), new TypeReference<ArrayList<Coffee>>() {});
++        } catch (IOException e ) {
++            throw new RuntimeException(e);
+         }
+ 
+         return coffeeTypes;
+Index: data/coffees.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/data/coffees.json b/data/coffees.json
+new file mode 100644
+--- /dev/null	(date 1733667595103)
++++ b/data/coffees.json	(date 1733667595103)
+@@ -0,0 +1,16 @@
++[
++    {
++        "name": "Coffee",
++        "price": 70,
++        "coffeeNeeded": 50,
++        "hasMilk": false,
++        "waterNeeded": 100
++    },
++    {
++        "name": "Coffee_DELETETHIS",
++        "price": 70,
++        "coffeeNeeded": 50,
++        "hasMilk": false,
++        "waterNeeded": 100
++    }
++]
+\ No newline at end of file

@@ -88,7 +88,7 @@ public class CoffeeMachine {
     }
 
     private boolean ingredientsAvailable(Coffee coffee) {
-        return controlPanel.getCoffeeAvailable() >= coffee.getCoffeeNeeded() && ((coffee.hasMilk() && controlPanel.hasEnoughMilk()) || !coffee.hasMilk()) && ((coffee.isAlcoholNeeded() && controlPanel.hasEnoughAlcohol()) || !coffee.isAlcoholNeeded());
+        return controlPanel.getCoffeeAvailable() >= coffee.getCoffeeNeeded() && ((coffee.hasMilk() && controlPanel.hasEnoughMilk()) || !coffee.hasMilk());
     }
 
     public int getInsertedMoney() {

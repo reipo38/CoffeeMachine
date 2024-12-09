@@ -4,55 +4,41 @@
         "price": 70,
         "coffeeNeeded": 50,
         "hasMilk": false,
-        "waterNeeded": 100,
-        "alcoholNeeded": false
+        "waterNeeded": 100
     },
     {
         "name": "Coffee Long",
         "price": 70,
         "coffeeNeeded": 50,
         "hasMilk": false,
-        "waterNeeded": 150,
-        "alcoholNeeded": false
+        "waterNeeded": 150
     },
     {
         "name": "Coffee Double",
         "price": 120,
         "coffeeNeeded": 100,
         "hasMilk": false,
-        "waterNeeded": 200,
-        "alcoholNeeded": false
+        "waterNeeded": 200
     },
     {
         "name": "Coffee with milk",
         "price": 120,
         "coffeeNeeded": 50,
         "hasMilk": true,
-        "waterNeeded": 100,
-        "alcoholNeeded": false
+        "waterNeeded": 100
     },
     {
         "name": "Machiatto",
         "price": 140,
         "coffeeNeeded": 40,
         "hasMilk": true,
-        "waterNeeded": 100,
-        "alcoholNeeded": false
+        "waterNeeded": 100
     },
     {
         "name": "Cappuccino",
         "price": 140,
         "coffeeNeeded": 40,
         "hasMilk": true,
-        "waterNeeded": 100,
-        "alcoholNeeded": false
-    },
-    {
-        "name": "Irish Coffee",
-        "price": 180,
-        "coffeeNeeded": 40,
-        "hasMilk": false,
-        "waterNeeded": 100,
-        "alcoholNeeded": true
+        "waterNeeded": 100
     }
 ]
