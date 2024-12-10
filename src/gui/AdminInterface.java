@@ -24,7 +24,6 @@ import data.handler.DataHandler;
 
 public class AdminInterface {
     private final ControlPanel controlPanel;
-    private final Diagram diagram;
 
     private final int windowWidth;
     private final int elementHeight;
@@ -45,7 +44,6 @@ public class AdminInterface {
         this.elementHeight = elementHeight;
         this.elementXOffset = elementXOffset;
         consumablesNames = controlPanel.getConsumablesNames();
-        diagram = new Diagram();
 
         this.panel.setLayout(null);
     }
