@@ -107,11 +107,11 @@ public class AdminInterface {
 
     private Component getButton(int i, int id) {
         JButton button = new JButton(componentTexts[i][id]);
-        button.addActionListener(e -> handleButtonAction(i, id, button.getText()));
+        button.addActionListener(e -> handleButtonAction(i, id));
         return button;
     }
 
-    private void handleButtonAction(int i, int id, String buttonText) {
+    private void handleButtonAction(int i, int id) {
         switch (i) {
             case 0 -> {//noinspection unchecked
                 controlPanel.changeConsumableValue((String) ((JComboBox<String>) components[0][0]).getSelectedItem(), Integer.parseInt(((PlaceholderJTextField) components[0][1]).getText()) * (id == 2 ? 1 : -1));

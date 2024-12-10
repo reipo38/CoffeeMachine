@@ -52,26 +52,6 @@ public class ControlPanel {
         consumables.put("Sugar", consumables.get("Sugar") - sugar);
     }
 
-    public void addMoney(int amount) {
-        consumables.put("Money", consumables.get("Money") + amount);
-    }
-
-    public void addSugar(int amount) {
-        consumables.put("Sugar", consumables.get("Sugar") + amount);
-    }
-
-    public void addCoffee(int amount) {
-        consumables.put("Coffee", consumables.get("Coffee") + amount);
-    }
-
-    public void addMilk(int amount) {
-        consumables.put("Milk", consumables.get("Milk") + amount);
-    }
-
-    public void addWater(int amount) {
-        consumables.put("Water", consumables.get("Water") + amount);
-    }
-
     public String getMoneySymbol() {
         return moneySymbol;
     }
