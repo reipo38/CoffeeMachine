@@ -137,11 +137,9 @@ public class AdminInterface {
             String category = entry.getKey();
             Integer value = entry.getValue();
 
-            // Add the data to the dataset (rowKey can be a constant for simplicity)
             dataset.addValue(value, "Ordered", category);
         }
 
-        // Create a bar chart
         JFreeChart chart = ChartFactory.createBarChart(
                 "Ordered Coffees Today",
                 "",
@@ -155,12 +153,8 @@ public class AdminInterface {
         chartPanel.setBounds(0, 700, windowWidth, 200); // TODO: да НЕ е hard code-нато
 
         panel.add(chartPanel);
-        panel.revalidate(); // Refresh the layout
+        panel.revalidate();
         panel.repaint();
-
-        // JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(panel);
-
-        // mainFrame.getContentPane().add(chartPanel);
     }
 
     /*
