@@ -1,6 +1,7 @@
 package gui;
 
 import coffee.machine.ControlPanel;
+import coffee.machine.ControlPanel.Consumable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,8 +41,11 @@ public class AdminInterface {
     }
 
     private void loadConsumables() {
-        for (int i = 0; i < consumablesNames.length; i++) {
-            JLabel label = new JLabel(String.format("%s available: %d", consumablesNames[i], controlPanel.getConsumableValue(i)));
+        Consumable[] consumables = Consumable.values();
+
+        for (int i = 0; i < consumables.length; i++) {
+            Consumable consumable = consumables[i];
+            JLabel label = new JLabel(String.format("%s available: %d", consumable.toString(), controlPanel.getConsumableValue(consumable)));
             label.setBounds(elementXOffset, elementHeight * 2 + elementHeight / 2 * i, windowWidth, elementHeight);
             panel.add(label);
         }

@@ -1,6 +1,8 @@
 package coffee.machine;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+
+import data.handler.DataHandler;
 
 public class ControlPanel {
     private String moneySymbol = "bgn";
@@ -16,15 +18,25 @@ public class ControlPanel {
             4 - sugar
      */
 
-    private int[] consumablesAvailable = new int[5];
+    // private int[] consumablesAvailable = new int[5];
+    private HashMap<String, Integer> consumables;
 
     private int milkNeeded;
 
     private int sugarChangeBy;
     private int sugarMax;
 
+    public enum Consumable {
+        Money,
+        Coffee,
+        Milk,
+        Sugar,
+        Alchohol
+    }
+
     public ControlPanel(CoffeeMachine coffeeMachine) {
         this.coffeeMachine = coffeeMachine;
+        this.consumables = DataHandler.loadConsumables();
     }
 
     public void addNewCoffee(String coffeeType, int price, int needAmountOfCoffee, boolean hasMilk, int waterNeeded) {
@@ -33,41 +45,41 @@ public class ControlPanel {
 
     public void withdrawMoney(int amount) {
         System.out.printf("Withdrawing %d%s.", amount, moneySymbol);
-        consumablesAvailable[0] -= amount;
+        consumables.put("Money", consumables.get("Money") - amount);
     }
 
     public boolean hasEnoughMilk(){
-        return consumablesAvailable[2] >= milkNeeded;
+        return consumables.get("Milk") >= milkNeeded;
     }
 
     public void updateInternalValues(Coffee coffee, int sugar) {
-        consumablesAvailable[0] += coffee.getPrice();
-        consumablesAvailable[1] -= coffee.getCoffeeNeeded();
+        consumables.put("Money", consumables.get("Money") + coffee.getPrice());
+        consumables.put("Coffee", consumables.get("Coffee") - coffee.getCoffeeNeeded());
         if (coffee.hasMilk()) {
-            consumablesAvailable[2] -= milkNeeded;
+            consumables.put("Milk", consumables.get("Milk") - milkNeeded);
         }
-        consumablesAvailable[3] -= coffee.getWaterNeeded();
-        consumablesAvailable[4] -= sugar;
+        consumables.put("Water", consumables.get("Water") - coffee.getWaterNeeded());
+        consumables.put("Sugar", consumables.get("Sugar") - sugar);
     }
 
     public void addMoney(int amount) {
-        consumablesAvailable[0] += amount;
+        consumables.put("Money", consumables.get("Money") + amount);
     }
 
     public void addSugar(int amount) {
-        consumablesAvailable[4] += amount;
+        consumables.put("Sugar", consumables.get("Sugar") + amount);
     }
 
     public void addCoffee(int amount) {
-        consumablesAvailable[1] += amount;
+        consumables.put("Coffee", consumables.get("Coffee") + amount);
     }
 
     public void addMilk(int amount) {
-        consumablesAvailable[2] += amount;
+        consumables.put("Milk", consumables.get("Milk") + amount);
     }
 
     public void addWater(int amount) {
-        consumablesAvailable[3] += amount;
+        consumables.put("Water", consumables.get("Water") + amount);
     }
 
     public String getMoneySymbol() {
@@ -88,7 +100,7 @@ public class ControlPanel {
     }
 
     public int getCoffeeAvailable() {
-        return consumablesAvailable[1];
+        return consumables.get("Coffee");
     }
 
     public int getMilkNeeded() {
@@ -103,8 +115,14 @@ public class ControlPanel {
         return new String[]{"Money", "Coffee", "Water", "Milk", "Sugar"};
     }
 
-    public int getConsumableValue(int id) {
-        return consumablesAvailable[id];
+    public int getConsumableValue(Consumable consumable) {
+        try {
+            return consumables.get(consumable.toString());
+        } catch (Exception e) {
+            System.out.println("Consumable " + consumable.toString() + " is not found!");
+            throw new RuntimeException(e);
+        }
+        
     }
 
     public String[] getCoffeeNames() {

@@ -34,9 +34,15 @@ public class DataHandler {
         }
     }
 
-    public static HashMap<String,Object> loadConsumables() {
+    public static HashMap<String, Integer> loadConsumables() {
         try {
-            HashMap<String, Object> consumablesHashMap = objectMapper.readValue(new File(consumablesPath.toString()), HashMap.class);
+            HashMap<String, Integer> consumablesHashMap = objectMapper.readValue(
+                new File(consumablesPath.toString()), 
+                new TypeReference<HashMap<String, Integer>>() {}
+            );
+
+            System.out.println(consumablesHashMap.toString());
+
             return consumablesHashMap;
         } catch (Exception e) {
             throw new RuntimeException(e);
