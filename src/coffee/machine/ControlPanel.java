@@ -9,16 +9,6 @@ public class ControlPanel {
 
     private CoffeeMachine coffeeMachine;
 
-    /*
-        indices:
-            0 - money
-            1 - coffee
-            2 - milk
-            3 - water
-            4 - sugar
-     */
-
-    // private int[] consumablesAvailable = new int[5];
     private HashMap<String, Integer> consumables;
 
     private int milkNeeded;

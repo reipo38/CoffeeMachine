@@ -1,5 +1,6 @@
 package gui;
 
+import coffee.machine.Coffee;
 import coffee.machine.CoffeeMachine;
 
 import javax.swing.*;
@@ -25,6 +26,19 @@ public class ClientInterface {
         this.elementXOffset = elementXOffset;
     }
 
+    private JButton createButton(int index, int buttonIndex, boolean isCoffeeButton, int buttonWidth, ArrayList<ArrayList<String>> buttonLabels) {
+        String buttonText = buttonLabels.get(index).get(buttonIndex);
+        JButton button = new JButton(buttonText);
+    
+        int xPosition = elementXOffset + (isCoffeeButton ? buttonIndex % 2 : buttonIndex) * buttonWidth;
+        int yPosition = calculateButtonYPosition(index, buttonIndex, isCoffeeButton);
+    
+        button.setBounds(xPosition, yPosition, buttonWidth - elementXOffset, elementHeight);
+        button.addActionListener(e -> handleButtonAction(index, buttonIndex));
+        button.setFocusable(false); 
+    
+        return button;
+    }
     protected void loadClientInterface() {
         ArrayList<ArrayList<String>> buttonLabels = createButtonLabels();
         int[] buttonCounts = new int[]{7, 2, buttonLabels.get(2).size()};  // Coin buttons, Sugar buttons, Coffee buttons
@@ -68,18 +82,6 @@ public class ClientInterface {
         }
     }
 
-    private JButton createButton(int index, int buttonIndex, boolean isCoffeeButton, int buttonWidth, ArrayList<ArrayList<String>> buttonLabels) {
-        String buttonText = buttonLabels.get(index).get(buttonIndex);
-        JButton button = new JButton(buttonText);
-
-        int xPosition = elementXOffset + (isCoffeeButton ? buttonIndex % 2 : buttonIndex) * buttonWidth;
-        int yPosition = calculateButtonYPosition(index, buttonIndex, isCoffeeButton);
-
-        button.setBounds(xPosition, yPosition, buttonWidth - elementXOffset, elementHeight);
-        button.addActionListener(e -> handleButtonAction(index, buttonIndex));
-
-        return button;
-    }
 
     private int calculateButtonYPosition(int index, int buttonIndex, boolean isCoffeeButton) {
         int yPosition = elementHeight * 3 + elementHeight * 2 * index;
