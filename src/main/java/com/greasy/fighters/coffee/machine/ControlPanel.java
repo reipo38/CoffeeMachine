@@ -19,9 +19,9 @@ public class ControlPanel {
     public enum Consumable {
         Money,
         Coffee,
+        Water,
         Milk,
-        Sugar,
-        Alchohol
+        Sugar
     }
 
     public ControlPanel(CoffeeMachine coffeeMachine) {
@@ -116,6 +116,7 @@ public class ControlPanel {
     }
 
     public void changeConsumableValue(String consumable, int amount) {
+        //TODO krasi opravi go tva da pishe promenite v na jason faila
         consumables.put(consumable, consumables.get(consumable) + amount);
     }
 
