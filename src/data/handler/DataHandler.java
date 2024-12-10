@@ -1,6 +1,10 @@
 package data.handler;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,6 +22,7 @@ public class DataHandler {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Path consumablesPath = Paths.get("data/consumables.json");
     private static final Path coffeesPath = Paths.get("data/coffees.json");
+    private static final Path passwordPath = Paths.get("data/password.txt");
 
     public static void saveStatistics() {
         Path statisticsPath = Paths.get("data/statistics/" + getDateMonthYear() + ".json");
@@ -58,18 +63,27 @@ public class DataHandler {
         return coffeeTypes;
     }
 
-    // private static String loadFile(String path) {
-    //     try {
-    //         File file = new File(path);
-    //         FileReader fr = new FileReader(file);
-    //         BufferedReader readFile = new BufferedReader(fr);
+    private static void savePassword(String password) { // * ненужен метод, ама го добавих, ако евентуално добавим смяна на парола
+        try {
+            FileWriter fileWriter = new FileWriter(passwordPath.toString());
+            fileWriter.write(password);
+            fileWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    //         return readFile.toString();
+    public static String getPassword() {
+        File passwordFile = new File(passwordPath.toString());
+        String password;
 
-    //     } catch (FileNotFoundException e) {
-    //         throw new RuntimeException(e);
-    //     }
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(passwordFile));
+            password = reader.readLine();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-    // }
-
+        return password;
+    }
 }

@@ -16,6 +16,7 @@ public class VisualManager {
 
     private final ClientInterface clientInterface;
     private final AdminInterface adminInterface;
+    private final PasswordPopup passwordPopup;
 
     private boolean regime = false; // Client - false; Admin - true;
     private final JPanel panel;
@@ -29,6 +30,7 @@ public class VisualManager {
         panel.setLayout(null); // Flexible layout
         clientInterface = new ClientInterface(panel, coffeeMachine, WINDOW_WIDTH, ELEMENT_HEIGHT, ELEMENT_X_OFFSET);
         adminInterface = new AdminInterface(panel, coffeeMachine.getControlPanel(), WINDOW_WIDTH, ELEMENT_HEIGHT, ELEMENT_X_OFFSET);
+        passwordPopup = new PasswordPopup();
         initializeUI();
     }
 
@@ -94,6 +96,14 @@ public class VisualManager {
     }
 
     private void toggleRegime() {
+        if (!regime) { // ако сме в главния панел
+            boolean isPasswordValidated = passwordPopup.validatePassword(); // валидира паролата
+
+            if (!isPasswordValidated) {
+                return; // спира метода до тук
+            }
+        }
+
         regime = !regime;
         removeRegimeSpecificComponents();
         panel.repaint();
