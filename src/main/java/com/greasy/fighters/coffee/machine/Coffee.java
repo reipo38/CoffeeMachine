@@ -10,7 +10,6 @@ public class Coffee {
     private int coffeeNeeded;
     private boolean hasMilk; // * Направи го int, за да видим колко мляко е необходимо
     private int waterNeeded;
-    private boolean alcoholNeeded;
 
     @JsonCreator
     public Coffee(
@@ -47,7 +46,4 @@ public class Coffee {
         return hasMilk;
     }
 
-    public boolean isAlcoholNeeded() {
-        return alcoholNeeded;
-    }
 }

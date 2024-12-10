@@ -38,7 +38,7 @@ public class ControlPanel {
         consumables.put("Money", consumables.get("Money") - amount);
     }
 
-    public boolean hasEnoughMilk(){
+    public boolean hasEnoughMilk() {
         return consumables.get("Milk") >= milkNeeded;
     }
 
@@ -82,7 +82,7 @@ public class ControlPanel {
 
     public void setSugarMax(int sugarMax) {
         this.sugarMax = sugarMax;
-        sugarChangeBy = sugarMax/5;
+        sugarChangeBy = sugarMax / 5;
     }
 
     public int getSugarChangeBy() {
@@ -112,7 +112,11 @@ public class ControlPanel {
             System.out.println("Consumable " + consumable.toString() + " is not found!");
             throw new RuntimeException(e);
         }
-        
+
+    }
+
+    public void changeConsumableValue(String consumable, int amount) {
+        consumables.put(consumable, consumables.get(consumable) + amount);
     }
 
     public String[] getCoffeeNames() {
