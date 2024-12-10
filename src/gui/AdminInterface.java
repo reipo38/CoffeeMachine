@@ -1,14 +1,30 @@
 package gui;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
+
 import coffee.machine.ControlPanel;
 import coffee.machine.ControlPanel.Consumable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import data.handler.DataHandler;
 
 public class AdminInterface {
     private final ControlPanel controlPanel;
+    private final Diagram diagram;
 
     private final int windowWidth;
     private final int elementHeight;
@@ -29,6 +45,9 @@ public class AdminInterface {
         this.elementHeight = elementHeight;
         this.elementXOffset = elementXOffset;
         consumablesNames = controlPanel.getConsumablesNames();
+        diagram = new Diagram();
+
+        this.panel.setLayout(null);
     }
 
     protected void loadAdminInterface() {
@@ -38,6 +57,8 @@ public class AdminInterface {
         loadComponents(1);
         loadComponents(2);
         loadComponents(3);
+        loadDiagram();
+
     }
 
     private void loadConsumables() {
@@ -103,6 +124,43 @@ public class AdminInterface {
             System.out.println("Selected: " + selectedItem);
         });
         return comboBox;
+    }
+
+    private void loadDiagram() {
+        /*
+         * може би премахни Statistics: label-а, защото има заглавие
+         */
+        HashMap<String, Integer> coffeeData = DataHandler.loadStatistic(); // TODO: виж статистиките за друг ден
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        for (Map.Entry<String, Integer> entry : coffeeData.entrySet()) {
+            String category = entry.getKey();
+            Integer value = entry.getValue();
+
+            // Add the data to the dataset (rowKey can be a constant for simplicity)
+            dataset.addValue(value, "Ordered", category);
+        }
+
+        // Create a bar chart
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Ordered Coffees Today",
+                "",
+                "Ordered",
+                dataset
+        );
+        
+        ChartPanel chartPanel = new ChartPanel(chart);
+        // chartPanel.setPreferredSize(new java.awt.Dimension(100, 100));
+        // chartPanel.setSize(new java.awt.Dimension(400, 150));
+        chartPanel.setBounds(0, 700, windowWidth, 200); // TODO: да НЕ е hard code-нато
+
+        panel.add(chartPanel);
+        panel.revalidate(); // Refresh the layout
+        panel.repaint();
+
+        // JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(panel);
+
+        // mainFrame.getContentPane().add(chartPanel);
     }
 
     /*

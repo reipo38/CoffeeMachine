@@ -84,8 +84,18 @@ public class DataHandler {
 
     public static HashMap<String, Integer> loadStatistic() {
         String filename = getDateMonthYear();
-        Path filePath = Paths.get("data/statistics/" + filename + ".json");
+        return loadStatisticByFilename(filename);
+    }
 
+    // ! не знам как по друг начин да се направят тези два метода
+
+    public static HashMap<String, Integer> loadStatistic(String filename) {
+        return loadStatisticByFilename(filename);
+    }
+
+    // * ChatGPT ми каза това
+    private static HashMap<String, Integer> loadStatisticByFilename(String filename) {
+        Path filePath = Paths.get("data/statistics", filename + ".json");
         return loadHashMapStringInteger(filePath);
     }
 
