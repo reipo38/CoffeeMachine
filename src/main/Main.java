@@ -21,10 +21,10 @@ public class Main {
 
         Statistics.loadDailyStatistic();
 
-        controlPanel.addCoffee(1000);
-        controlPanel.addSugar(1000);
-        controlPanel.addMilk(1000);
-        controlPanel.addWater(1000);
+        // controlPanel.addCoffee(1000);
+        // controlPanel.addSugar(1000);
+        // controlPanel.addMilk(1000);
+        // controlPanel.addWater(1000);
 
         controlPanel.setSugarMax(25);
         controlPanel.setMilkNeeded(25);
