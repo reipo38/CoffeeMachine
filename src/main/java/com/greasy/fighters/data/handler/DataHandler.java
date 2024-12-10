@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,7 @@ public class DataHandler {
     private static final Path consumablesPath = Paths.get("data/consumables.json");
     private static final Path coffeesPath = Paths.get("data/coffees.json");
     private static final Path passwordPath = Paths.get("data/password.txt");
+    private static final Path moneyPath = Paths.get("data/money.json");
 
     public static void saveStatistics() {
         Path statisticsPath = Paths.get("data/statistics/" + getDateMonthYear() + ".json");
@@ -35,6 +37,22 @@ public class DataHandler {
 
     public static HashMap<String, Integer> loadConsumables() {
         return loadHashMapStringInteger(consumablesPath);
+    }
+
+    public static HashMap<Integer, Integer> loadMoney() {
+        HashMap<String, Integer> originalHashMap = loadHashMapStringInteger(moneyPath); // * JSON е тъп и не може да се използва нещо различно от низ като ключ
+
+        HashMap<Integer, Integer> moneyHashMap = new HashMap<>();
+
+        for (Map.Entry<String, Integer> entry : originalHashMap.entrySet()) {
+            /*
+             * може би трябва да се премести в друг метод
+             */
+            Integer newKey = entry.getKey().length();
+            moneyHashMap.put(newKey, entry.getValue());
+        }
+
+        return moneyHashMap;
     }
 
     private static String getDateMonthYear() {

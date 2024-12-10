@@ -1,16 +1,20 @@
 package com.greasy.fighters.coffee.machine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.greasy.fighters.Main;
 import com.greasy.fighters.data.handler.DataHandler;
 import com.greasy.fighters.statistic.Statistics;
 
 public class CoffeeMachine {
+    // TODO: re
 
     private final ArrayList<Coffee> coffees;
     private final ControlPanel controlPanel = new ControlPanel(this);
     private final int[] coins = new int[]{5, 10, 20, 50, 100, 200};
+    private HashMap<Integer, Integer> coinsHashMap;
 
     private int sugarNeeded;
 
@@ -18,6 +22,8 @@ public class CoffeeMachine {
 
     public CoffeeMachine(ArrayList<Coffee> coffees) {
         this.coffees = coffees;
+        
+        coinsHashMap = DataHandler.loadMoney();
     }
 
     public void addNewCoffee(Coffee coffee) {
@@ -174,5 +180,16 @@ public class CoffeeMachine {
         }
 
         return null;
+
+    }
+
+    public int getTotalMoney() {
+        int totalMoney = 0;
+
+        for (Map.Entry<Integer, Integer> entry : coinsHashMap.entrySet()) {
+            totalMoney += entry.getKey() * entry.getValue();
+        }
+
+        return totalMoney;
     }
 }
