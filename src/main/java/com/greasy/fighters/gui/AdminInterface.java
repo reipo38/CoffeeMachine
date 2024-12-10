@@ -38,7 +38,7 @@ public class AdminInterface {
             new String[]{"ILLEGAL_STATE", "Amount", "Add", "Remove"},
             new String[]{"ILLEGAL_STATE", "Delete"},
             new String[]{"Name", "Create"},
-            new String[]{"Price", "Coffee amount (g)", "Has milk (t/f)", "Water needed (ml)"}
+            new String[]{"Price", "Coffee amount", "Has milk", "Water needed"}
     };
 
     private Component[][] components = new Component[][]{
