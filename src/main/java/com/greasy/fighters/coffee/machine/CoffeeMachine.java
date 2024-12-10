@@ -20,8 +20,9 @@ public class CoffeeMachine {
         this.coffees = coffees;
     }
 
-    protected void addNewCoffee(Coffee coffee) {
+    public void addNewCoffee(Coffee coffee) {
         coffees.add(coffee);
+        DataHandler.saveCoffees(coffees);
     }
 
     public void deleteCoffee(Coffee coffee) {

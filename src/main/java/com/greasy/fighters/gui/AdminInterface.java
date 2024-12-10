@@ -127,8 +127,17 @@ public class AdminInterface {
 
                 Main.coffeeMachine.deleteCoffee(coffee);
             }
-            case 3 -> {
-                System.out.println("Button: 3");
+            case 2 -> {
+                System.out.println("2");
+                String name = ((PlaceholderJTextField) components[2][0]).getText();
+                int price = Integer.parseInt(((PlaceholderJTextField) components[3][0]).getText());
+                int needAmountOfCoffee = Integer.parseInt(((PlaceholderJTextField) components[3][1]).getText());
+                boolean hasMilk = Boolean.parseBoolean(((PlaceholderJTextField) components[3][2]).getText());
+                int waterNeeded = Integer.parseInt(((PlaceholderJTextField) components[3][3]).getText());
+
+                Coffee coffee = new Coffee(name, price, needAmountOfCoffee, hasMilk, waterNeeded);
+                
+                Main.coffeeMachine.addNewCoffee(coffee);
             }
 
             //TODO case 1 -> Krasi tuka si ti. Napravi logika za triene na kafe

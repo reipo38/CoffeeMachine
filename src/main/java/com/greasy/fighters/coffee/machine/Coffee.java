@@ -46,4 +46,8 @@ public class Coffee {
         return hasMilk;
     }
 
+    @Override
+    public String toString() {
+        return "Name: " + name + "\nPrice: " + price + "\nCoffee: " + coffeeNeeded + "\nWater: " + waterNeeded + "\nMilk: " + hasMilk;
+    }
 }
