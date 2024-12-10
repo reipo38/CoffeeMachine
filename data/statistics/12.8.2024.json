@@ -1,1 +1,8 @@
-{"Machiatto":1,"Irish Coffee":2}
+{
+    "Coffee": 335,
+    "Coffee Long": 891,
+    "Coffee Double": 520,
+    "Coffee with milk": 339,
+    "Machiatto": 168,
+    "Cappuccino": 311
+}
