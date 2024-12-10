@@ -3,6 +3,7 @@ package com.greasy.fighters.coffee.machine;
 import java.util.ArrayList;
 
 import com.greasy.fighters.Main;
+import com.greasy.fighters.data.handler.DataHandler;
 import com.greasy.fighters.statistic.Statistics;
 
 public class CoffeeMachine {
@@ -21,6 +22,11 @@ public class CoffeeMachine {
 
     protected void addNewCoffee(Coffee coffee) {
         coffees.add(coffee);
+    }
+
+    public void deleteCoffee(Coffee coffee) {
+        coffees.remove(coffee);
+        DataHandler.saveCoffees(coffees);
     }
 
     public void changeSugarQuantity(boolean increment) {
@@ -157,5 +163,15 @@ public class CoffeeMachine {
 
     public int getSugarPercentage() {
         return (sugarNeeded * 100) / controlPanel.getSugarMax();
+    }
+
+    public Coffee getCoffeeByName(String name) {
+        for (Coffee coffee : coffees) {
+            if (coffee.getName().equals(name)) {
+                return coffee;
+            }
+        }
+
+        return null;
     }
 }

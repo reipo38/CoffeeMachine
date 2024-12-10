@@ -1,6 +1,6 @@
 package com.greasy.fighters.gui;
 
-import java.awt.*;
+import java.awt.Component;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +14,8 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import com.greasy.fighters.Main;
+import com.greasy.fighters.coffee.machine.Coffee;
 import com.greasy.fighters.coffee.machine.ControlPanel;
 import com.greasy.fighters.coffee.machine.ControlPanel.Consumable;
 import com.greasy.fighters.data.handler.DataHandler;
@@ -116,6 +118,17 @@ public class AdminInterface {
             case 0 -> {//noinspection unchecked
                 controlPanel.changeConsumableValue((String) ((JComboBox<String>) components[0][0]).getSelectedItem(), Integer.parseInt(((PlaceholderJTextField) components[0][1]).getText()) * (id == 2 ? 1 : -1));
                 loadConsumables();
+            }
+            case 1 -> {
+                String coffeeName = (String) ((JComboBox<String>) components[1][0]).getSelectedItem();
+                ((JComboBox<String>) components[1][0]).removeItem(coffeeName);
+
+                Coffee coffee = Main.coffeeMachine.getCoffeeByName(coffeeName);
+
+                Main.coffeeMachine.deleteCoffee(coffee);
+            }
+            case 3 -> {
+                System.out.println("Button: 3");
             }
 
             //TODO case 1 -> Krasi tuka si ti. Napravi logika za triene na kafe

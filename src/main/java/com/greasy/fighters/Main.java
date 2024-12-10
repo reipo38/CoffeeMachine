@@ -7,7 +7,7 @@ import com.greasy.fighters.gui.VisualManager;
 import com.greasy.fighters.statistic.Statistics;
 
 public class Main {
-    private static final CoffeeMachine coffeeMachine = new CoffeeMachine(DataHandler.loadCoffeeTypes());
+    public static final CoffeeMachine coffeeMachine = new CoffeeMachine(DataHandler.loadCoffeeTypes());
     private static final ControlPanel controlPanel = coffeeMachine.getControlPanel();
     public static final VisualManager visualManager = new VisualManager(coffeeMachine);
 

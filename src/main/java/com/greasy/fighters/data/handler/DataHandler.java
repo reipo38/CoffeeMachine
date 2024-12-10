@@ -117,4 +117,14 @@ public class DataHandler {
             throw new RuntimeException(e);
         }
     }
+
+    public static void saveCoffees(ArrayList<Coffee> coffees) {
+        File file = new File(coffeesPath.toString());
+
+        try {
+            objectMapper.writeValue(file, coffees);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
