@@ -75,7 +75,7 @@ public class AdminInterface {
     }
 
     private void loadComponentsRow(int i) {
-        int yPosition = elementHeight * (6 + i * 2);
+        int yPosition = elementHeight * (4 + i * 2);
         int width = (windowWidth - elementXOffset) / componentTypePerRow[i].length;
         int[] componentTypes = componentTypePerRow[i];
         for (int id = 0; id < componentTypes.length; id++) {
@@ -130,7 +130,7 @@ public class AdminInterface {
             if (consumablesLabels[i] != null) panel.remove(consumablesLabels[i]);
             Consumable consumable = consumables[i];
             JLabel label = new JLabel(String.format("%s available: %d", consumable.toString(), controlPanel.getConsumableValue(consumable)));
-            label.setBounds(elementXOffset, elementHeight * 2 + elementHeight / 2 * i, windowWidth, elementHeight);
+            label.setBounds(elementXOffset, elementHeight/2 + elementHeight / 2 * i, windowWidth, elementHeight);
             consumablesLabels[i] = label;
             panel.add(label);
             panel.repaint();
@@ -142,7 +142,7 @@ public class AdminInterface {
             JLabel label = new JLabel(labelsTitles[i]);
             if (i == labelsTitles.length - 1)
                 i++; //i се инкрементира при зареждане на последния label за да може статистиките да излязат по-надолу спрямо горната секция
-            label.setBounds(elementXOffset, elementHeight * 6 + elementHeight * 2 * i - elementHeight / 2, windowWidth, elementHeight / 2);
+            label.setBounds(elementXOffset, elementHeight * 4 + elementHeight * 2 * i - elementHeight / 2, windowWidth, elementHeight / 2);
             panel.add(label);
         }
     }

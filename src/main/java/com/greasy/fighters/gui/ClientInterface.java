@@ -3,9 +3,7 @@ package com.greasy.fighters.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import com.greasy.fighters.coffee.machine.CoffeeMachine;
 
@@ -15,6 +13,9 @@ public class ClientInterface {
     private final int windowWidth;
     private final int elementHeight;
     private final int elementXOffset;
+
+    private JLabel outputLabel;
+    private JTextArea outputTextArea;
 
     private JLabel[] labels;
 
@@ -51,6 +52,7 @@ public class ClientInterface {
             loadLabel(i, labelsTitles);
             loadButtons(i, buttonCounts, buttonLabels);
         }
+        loadOutputArea();
     }
 
     private ArrayList<ArrayList<String>> createButtonLabels() {
@@ -120,6 +122,31 @@ public class ClientInterface {
     private void handleCoffeePurchase(int buttonIndex) {
         coffeeMachine.buyCoffee(buttonIndex);
         labels[0].setText(String.format("Insert coins (currently %d):", coffeeMachine.getInsertedMoney()));
+    }
+
+    private void loadOutputArea() {
+        outputLabel = createLabel();
+        panel.add(outputLabel);
+        outputTextArea = createTextArea();
+        panel.add(outputTextArea);
+    }
+
+    private JLabel createLabel() {
+        JLabel label = new JLabel("Output:");
+        label.setBounds(elementXOffset, elementHeight/2, windowWidth - elementXOffset*2, elementHeight/2);
+        return label;
+    }
+
+    private JTextArea createTextArea() {
+        JTextArea textArea = new JTextArea();
+        textArea.setBounds(elementXOffset, elementHeight, windowWidth - elementXOffset * 2, elementHeight);
+        textArea.setEditable(false);
+        textArea.setFocusable(false);
+        return textArea;
+    }
+
+    public void setOutputText(String text) {
+        outputTextArea.setText(text);
     }
 
 }

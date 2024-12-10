@@ -28,8 +28,6 @@ public class VisualManager {
     private boolean regime = false; // Client - false; Admin - true;
     private final JPanel panel;
 
-    private JLabel outputLabel;
-    private JTextArea outputTextArea;
     private JButton regimeButton;
 
     public VisualManager(CoffeeMachine coffeeMachine) {
@@ -44,13 +42,12 @@ public class VisualManager {
     public void loadGUI() {
         clientInterface.loadClientInterface();
         //adminInterface.loadAdminInterface();
-        loadOutputArea();
         loadChangeRegimeButton();
         loadFrame();
     }
 
     public void setOutputText(String text) {
-        outputTextArea.setText(text);
+        clientInterface.setOutputText(text);
         clearAfterTimeout();
     }
 
@@ -73,28 +70,6 @@ public class VisualManager {
         frame.setVisible(true);
     }
 
-    private void loadOutputArea() {
-        outputLabel = createLabel();
-        panel.add(outputLabel);
-
-        outputTextArea = createTextArea();
-        panel.add(outputTextArea);
-    }
-
-    private JLabel createLabel() {
-        JLabel label = new JLabel("Output:");
-        label.setBounds(ELEMENT_X_OFFSET, ELEMENT_HEIGHT/2, WINDOW_WIDTH - ELEMENT_X_OFFSET*2, ELEMENT_HEIGHT/2);
-        return label;
-    }
-
-    private JTextArea createTextArea() {
-        JTextArea textArea = new JTextArea();
-        textArea.setBounds(VisualManager.ELEMENT_X_OFFSET, VisualManager.ELEMENT_HEIGHT, WINDOW_WIDTH - ELEMENT_X_OFFSET * 2, ELEMENT_HEIGHT);
-        textArea.setEditable(false);
-        textArea.setFocusable(false);
-        return textArea;
-    }
-
     private void loadChangeRegimeButton() {
         regimeButton = new JButton("Admin Menu");
         regimeButton.setBounds(WINDOW_WIDTH - WINDOW_WIDTH / 5 - ELEMENT_X_OFFSET, WINDOW_HEIGHT - ELEMENT_HEIGHT * 2, WINDOW_WIDTH / 5, ELEMENT_HEIGHT);
@@ -105,24 +80,16 @@ public class VisualManager {
     private void toggleRegime() {
         if (!regime) { // ако сме в главния панел
             boolean isPasswordValidated = passwordPopup.validatePassword(); // валидира паролата
-
             if (!isPasswordValidated) {
                 return; // спира метода до тук
             }
         }
 
         regime = !regime;
-        removeRegimeSpecificComponents();
+        panel.removeAll();
+        loadChangeRegimeButton();
         panel.repaint();
         updateRegime();
-    }
-
-    private void removeRegimeSpecificComponents() {
-        for (Component comp : panel.getComponents()) {
-            if (comp != regimeButton && comp != outputTextArea && comp != outputLabel) {
-                panel.remove(comp);
-            }
-        }
     }
 
     private void updateRegime() {
@@ -139,7 +106,7 @@ public class VisualManager {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                outputTextArea.setText("");
+                clientInterface.setOutputText("");
             }
         }, 5000);
     }
