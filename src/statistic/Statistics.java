@@ -16,16 +16,6 @@ public class Statistics {
      */
 
     private static HashMap<String, Integer> dailyStatistic = new HashMap<>();
-    //// private Date date;
-    private static Calendar calendar;
-
-    //// public Statistics(Date date) {
-    ////     this.date = date;
-    //// }
-
-    public static String getDateMonth(){ 
-        return calendar.get(Calendar.DATE) + " : " + (calendar.get(Calendar.MONTH+1)); // * date.getDate() и date.getMonth() са deprecated
-    }
 
     // * Всяко кафе ще се добавя, ако е поръчано
     // * Така се пълни с излишни работи
@@ -34,6 +24,10 @@ public class Statistics {
     //         dailyStatistic.put(coffee.getName(),0);
     //     }
     // }
+
+    public static void loadDailyStatistic() {
+        dailyStatistic = DataHandler.loadStatistic();
+    }
 
     public static void addCoffeeToDailyStatistic(Coffee coffee) {
         dailyStatistic.put(coffee.getName(), dailyStatistic.getOrDefault(coffee.getName(), 0) + 1);

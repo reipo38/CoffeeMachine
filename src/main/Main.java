@@ -3,7 +3,8 @@ package main;
 import coffee.machine.CoffeeMachine;
 import coffee.machine.ControlPanel;
 import data.handler.DataHandler;
-import gui.*;
+import gui.VisualManager;
+import statistic.Statistics;
 
 public class Main {
     private static final CoffeeMachine coffeeMachine = new CoffeeMachine(DataHandler.loadCoffeeTypes());
@@ -17,6 +18,8 @@ public class Main {
         // controlPanel.addNewCoffee("Coffee with milk", 120, 50, true, 100);
         // controlPanel.addNewCoffee("Machiatto", 140, 40, true, 100);
         // controlPanel.addNewCoffee("Cappuccino", 140, 40, true, 100);
+
+        Statistics.loadDailyStatistic();
 
         controlPanel.addCoffee(1000);
         controlPanel.addSugar(1000);

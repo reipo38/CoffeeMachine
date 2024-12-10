@@ -35,18 +35,7 @@ public class DataHandler {
     }
 
     public static HashMap<String, Integer> loadConsumables() {
-        try {
-            HashMap<String, Integer> consumablesHashMap = objectMapper.readValue(
-                new File(consumablesPath.toString()), 
-                new TypeReference<HashMap<String, Integer>>() {}
-            );
-
-            System.out.println(consumablesHashMap.toString());
-
-            return consumablesHashMap;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return loadHashMapStringInteger(consumablesPath);
     }
 
     private static String getDateMonthYear() {
@@ -91,5 +80,32 @@ public class DataHandler {
         }
 
         return password;
+    }
+
+    public static HashMap<String, Integer> loadStatistic() {
+        String filename = getDateMonthYear();
+        Path filePath = Paths.get("data/statistics/" + filename + ".json");
+
+        return loadHashMapStringInteger(filePath);
+    }
+
+    public static HashMap<String, Integer> loadHashMapStringInteger(Path filePath) {
+        String filePathString = filePath.toString();
+
+        try {
+            HashMap<String, Integer> hashMap = objectMapper.readValue(
+                new File(filePathString), 
+                new TypeReference<HashMap<String, Integer>>() {}
+            );
+
+            System.out.println(hashMap.toString());
+
+            return hashMap;
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + filePathString);
+            return new HashMap<String, Integer>();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
