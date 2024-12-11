@@ -12,6 +12,8 @@ public class Main {
     public static final VisualManager visualManager = new VisualManager(coffeeMachine);
 
     public static void main(String[] args) {
+
+        System.out.println(controlPanel.getAmountOfCoins());
         // controlPanel.addNewCoffee("Coffee", 70, 50, false, 100);
         // controlPanel.addNewCoffee("Coffee Long", 70, 50, false, 150);
         // controlPanel.addNewCoffee("Coffee Double", 120, 100, false, 200);

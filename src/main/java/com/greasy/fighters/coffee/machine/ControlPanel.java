@@ -23,19 +23,18 @@ public class ControlPanel {
     private HashMap<String, Integer> consumables; // Речник със съставките в кафемашината
 
     // Речник, който пази количеството монети от всеки номинал. Логиката е временна. Ще бъде променена скоро
-    //TODO krasi promeni q pliiz
     private HashMap<Integer, Integer> amountOfCoins = createAmountOfCoins();
 
     private HashMap<Integer, Integer> createAmountOfCoins() {
-        HashMap<Integer, Integer> amountOfCoins = new HashMap<>();
+        // HashMap<Integer, Integer> amountOfCoins = new HashMap<>();
         // Инициализация на количествата монети от различни номинали
-        amountOfCoins.put(200, 0); // 2 лева
-        amountOfCoins.put(100, 0); // 1 лев
-        amountOfCoins.put(50, 10); // 50 стотинки
-        amountOfCoins.put(20, 10); // 20 стотинки
-        amountOfCoins.put(10, 10); // 10 стотинки
-        amountOfCoins.put(5, 10);  // 5 стотинки
-        return amountOfCoins;
+        // amountOfCoins.put(200, 0); // 2 лева
+        // amountOfCoins.put(100, 0); // 1 лев
+        // amountOfCoins.put(50, 10); // 50 стотинки
+        // amountOfCoins.put(20, 10); // 20 стотинки
+        // amountOfCoins.put(10, 10); // 10 стотинки
+        // amountOfCoins.put(5, 10);  // 5 стотинки
+        return DataHandler.loadMoney();
     }
 
     private int milkNeeded; // Количеството мляко, което е нужно за всяко кафе с мляко
@@ -136,8 +135,8 @@ public class ControlPanel {
 
     // Метод за промяна на стойността на съставка
     public void changeConsumableValue(String consumable, int amount) {
-        //TODO krasi opravi go tva da gi zapazva v json faila taka che da se zapazvat promenite pri restart
         consumables.put(consumable, consumables.get(consumable) + amount); // Променяме количеството на съставката
+        DataHandler.saveConsumables(consumables);
     }
 
     // Метод за получаване на монетите по номинали

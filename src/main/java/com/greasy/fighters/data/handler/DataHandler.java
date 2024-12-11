@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,7 @@ public class DataHandler {
     private static final Path consumablesPath = Paths.get("data/consumables.json");
     private static final Path coffeesPath = Paths.get("data/coffees.json");
     private static final Path passwordPath = Paths.get("data/password.txt");
+    private static final Path moneyPath = Paths.get("data/money.json");
 
     public static void saveStatistics() {
         Path statisticsPath = Paths.get("data/statistics/" + getDateMonthYear() + ".json");
@@ -35,6 +37,10 @@ public class DataHandler {
 
     public static HashMap<String, Integer> loadConsumables() {
         return loadHashMapStringInteger(consumablesPath);
+    }
+
+    public static void saveConsumables(HashMap<String, Integer> consumables) {
+        saveToJson(consumablesPath, consumables);
     }
 
     private static String getDateMonthYear() {
@@ -55,6 +61,10 @@ public class DataHandler {
         }
 
         return coffeeTypes;
+    }
+
+    public static void saveCoffees(ArrayList<Coffee> coffees) {
+        saveToJson(coffeesPath, coffees);
     }
 
     private static void savePassword(String password) { // * ненужен метод, ама го добавих, ако евентуално добавим смяна на парола
@@ -118,11 +128,27 @@ public class DataHandler {
         }
     }
 
-    public static void saveCoffees(ArrayList<Coffee> coffees) {
-        File file = new File(coffeesPath.toString());
+    public static HashMap<Integer, Integer> loadMoney() {
+        HashMap<String, Integer> originalHashMap = loadHashMapStringInteger(moneyPath); // * JSON е тъп и не може да се използва нещо различно от низ като ключ
+
+        HashMap<Integer, Integer> moneyHashMap = new HashMap<>();
+
+        for (Map.Entry<String, Integer> entry : originalHashMap.entrySet()) {
+            /*
+             * може би трябва да се премести в друг метод
+             */
+            Integer newKey = entry.getKey().length();
+            moneyHashMap.put(newKey, entry.getValue());
+        }
+
+        return moneyHashMap;
+    }
+
+    private static void saveToJson(Path path, Object data) {
+        File file = new File(path.toString());
 
         try {
-            objectMapper.writeValue(file, coffees);
+            objectMapper.writeValue(file, data);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
