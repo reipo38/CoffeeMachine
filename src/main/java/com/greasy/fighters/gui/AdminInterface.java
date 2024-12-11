@@ -14,8 +14,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import com.greasy.fighters.Main;
-import com.greasy.fighters.coffee.machine.Coffee;
 import com.greasy.fighters.coffee.machine.ControlPanel;
 import com.greasy.fighters.coffee.machine.ControlPanel.Consumable;
 import com.greasy.fighters.data.handler.DataHandler;
@@ -50,18 +48,18 @@ public class AdminInterface {
             new Component[4],
     };
 
-    private JLabel[] consumablesLabels = new JLabel[5];
-
     private String[] labelsTitles = new String[]{"Add/ Remove consumable:", "Delete Coffee:", "Add new Coffee:", "Statistics:"};
 
     private final JPanel panel;
+    private final JButton regimeButton;
 
-    public AdminInterface(JPanel panel, ControlPanel controlPanel, int windowWidth, int elementHeight, int elementXOffset) {
+    public AdminInterface(JPanel panel, ControlPanel controlPanel, int windowWidth, int elementHeight, int elementXOffset, JButton regimeButton) {
         this.panel = panel;
         this.controlPanel = controlPanel;
         this.windowWidth = windowWidth;
         this.elementHeight = elementHeight;
         this.elementXOffset = elementXOffset;
+        this.regimeButton = regimeButton;
         consumablesNames = controlPanel.getConsumablesNames();
 
         this.panel.setLayout(null);
@@ -113,49 +111,37 @@ public class AdminInterface {
         return button;
     }
 
+    @SuppressWarnings("unchecked")
     private void handleButtonAction(int i, int id) {
-        switch (i) {
-            case 0 -> {//noinspection unchecked
-                controlPanel.changeConsumableValue((String) ((JComboBox<String>) components[0][0]).getSelectedItem(), Integer.parseInt(((PlaceholderJTextField) components[0][1]).getText()) * (id == 2 ? 1 : -1));
-                loadConsumables();
+        try {
+            switch (i) {
+                case 0 -> controlPanel.changeConsumableValue((String) ((JComboBox<String>) components[0][0]).getSelectedItem(), Integer.parseInt(((PlaceholderJTextField) components[0][1]).getText()) * (id == 2 ? 1 : -1));
+                case 1 -> controlPanel.deleteCoffeeByName( (String) ((JComboBox<String>) components[1][0]).getSelectedItem());
+                case 2 -> controlPanel.addNewCoffee(
+                        ((PlaceholderJTextField) components[2][0]).getText(),                       // name
+                        Integer.parseInt(((PlaceholderJTextField) components[3][0]).getText()),     // price
+                        Integer.parseInt(((PlaceholderJTextField) components[3][1]).getText()),     // coffeeNeeded
+                        Boolean.parseBoolean(((PlaceholderJTextField) components[3][2]).getText()), // hasMilk
+                        Integer.parseInt(((PlaceholderJTextField) components[3][3]).getText()));    // waterNeeded
             }
-            case 1 -> {
-                String coffeeName = (String) ((JComboBox<String>) components[1][0]).getSelectedItem();
-                ((JComboBox<String>) components[1][0]).removeItem(coffeeName);
-
-                Coffee coffee = Main.coffeeMachine.getCoffeeByName(coffeeName);
-
-                Main.coffeeMachine.deleteCoffee(coffee);
-            }
-            case 2 -> {
-                System.out.println("2");
-                String name = ((PlaceholderJTextField) components[2][0]).getText();
-                int price = Integer.parseInt(((PlaceholderJTextField) components[3][0]).getText());
-                int needAmountOfCoffee = Integer.parseInt(((PlaceholderJTextField) components[3][1]).getText());
-                boolean hasMilk = Boolean.parseBoolean(((PlaceholderJTextField) components[3][2]).getText());
-                int waterNeeded = Integer.parseInt(((PlaceholderJTextField) components[3][3]).getText());
-
-                Coffee coffee = new Coffee(name, price, needAmountOfCoffee, hasMilk, waterNeeded);
-                
-                Main.coffeeMachine.addNewCoffee(coffee);
-            }
-
-            //TODO case 1 -> Krasi tuka si ti. Napravi logika za triene na kafe
-            //TODO case 3 -> i za dobavqne
-
+            reloadPanel();
+        } catch (NumberFormatException ignored){}
         }
+
+    private void reloadPanel() {
+        panel.removeAll();
+        panel.add(regimeButton);
+        loadAdminInterface();
+        panel.repaint();
     }
 
     private void loadConsumables() {
         Consumable[] consumables = Consumable.values();
         for (int i = 0; i < consumables.length; i++) {
-            if (consumablesLabels[i] != null) panel.remove(consumablesLabels[i]);
             Consumable consumable = consumables[i];
             JLabel label = new JLabel(String.format("%s available: %d", consumable.toString(), controlPanel.getConsumableValue(consumable)));
             label.setBounds(elementXOffset, elementHeight/2 + elementHeight / 2 * i, windowWidth, elementHeight);
-            consumablesLabels[i] = label;
             panel.add(label);
-            panel.repaint();
         }
     }
 
@@ -189,14 +175,8 @@ public class AdminInterface {
                 "Ordered",
                 dataset
         );
-
         ChartPanel chartPanel = new ChartPanel(chart);
-        // chartPanel.setPreferredSize(new java.awt.Dimension(100, 100));
-        // chartPanel.setSize(new java.awt.Dimension(400, 150));
-        chartPanel.setBounds(0, 700, windowWidth, 200); // TODO: да НЕ е hard code-нато
-
+        chartPanel.setBounds(elementXOffset, elementHeight*12, windowWidth - elementXOffset*2, elementHeight*6);
         panel.add(chartPanel);
-        panel.revalidate();
-        panel.repaint();
     }
 }

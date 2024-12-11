@@ -5,6 +5,14 @@ import java.util.HashMap;
 import com.greasy.fighters.data.handler.DataHandler;
 
 public class ControlPanel {
+    /*** Клас ControlPanel. Отговаря за администраторката логика в кафемашината. Управляват се количествата на всичките съставки, общият брой пари, максималното количество захар, изолзваното количесто мляко и т.н.
+     * поле moneySymbol - лесен начин за промяна на символа за парите
+     * поле coffeeMachine - кафемашината, която този контролен панел управлява
+     * поле consumables - съдържа количеството пари и всички съставки, налични в кафемашината
+     * поле milkNeeded - количеството мляко, което се използва за приготвянето на едно кафе с мляко
+     * поле sugarMax- максималното количество захар, което може да бъде избрано
+     * поле sugarChangeBy - количество захар, с което избраното количество се променя. То винаги е една пета от максималното количество захар
+     */
     private String moneySymbol = "bgn";
 
     private CoffeeMachine coffeeMachine;
@@ -13,6 +21,7 @@ public class ControlPanel {
 
     //TODO Krasi vurji tiq tupotii s jeison
 
+    // речмик, който пази количеството монети от всеки номинал. ПОДЛЕЖИ НА ИЗМЕНЕНИЕ. ЗА СЕГА ЛОГИКАТА Е ТАКАВА
     private HashMap<Integer, Integer> amountOfCoins = createAmountOfCoins();
     private HashMap<Integer, Integer> createAmountOfCoins() {
         HashMap<Integer, Integer> amountOfCoins = new HashMap<>();
@@ -47,13 +56,14 @@ public class ControlPanel {
         coffeeMachine.addNewCoffee(new Coffee(coffeeType, price, needAmountOfCoffee, hasMilk, waterNeeded));
     }
 
-    public void withdrawMoney(int amount) {
-        System.out.printf("Withdrawing %d%s.", amount, moneySymbol);
-        consumables.put("Money", consumables.get("Money") - amount);
+    public void deleteCoffeeByName(String coffeeName) {
+        Coffee coffee = coffeeMachine.getCoffeeByName(coffeeName);
+        coffeeMachine.deleteCoffee(coffee);
     }
 
-    public boolean hasEnoughMilk() {
-        return consumables.get("Milk") >= milkNeeded;
+    // Метод за проверка дали всички нужни съставки за кафето са налични
+    public boolean ingredientsAvailable(Coffee coffee) {
+        return consumables.get("Coffee") >= coffee.getCoffeeNeeded() && ((coffee.hasMilk() && consumables.get("Milk") >= milkNeeded) || !coffee.hasMilk());
     }
 
     public void updateInternalValues(Coffee coffee, int sugar) {
@@ -74,6 +84,7 @@ public class ControlPanel {
         return sugarMax;
     }
 
+    // set метод за максималното количество захар. sugarChangeBy винаги е една пета от него
     public void setSugarMax(int sugarMax) {
         this.sugarMax = sugarMax;
         sugarChangeBy = sugarMax / 5;
@@ -81,10 +92,6 @@ public class ControlPanel {
 
     public int getSugarChangeBy() {
         return sugarChangeBy;
-    }
-
-    public int getCoffeeAvailable() {
-        return consumables.get("Coffee");
     }
 
     public int getMilkNeeded() {

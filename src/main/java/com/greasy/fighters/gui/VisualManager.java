@@ -1,15 +1,12 @@
 package com.greasy.fighters.gui;
 
-import java.awt.Component;
 import java.awt.Font;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 import com.greasy.fighters.coffee.machine.CoffeeMachine;
@@ -33,10 +30,11 @@ public class VisualManager {
     public VisualManager(CoffeeMachine coffeeMachine) {
         panel = new JPanel();
         panel.setLayout(null); // Flexible layout
-        clientInterface = new ClientInterface(panel, coffeeMachine, WINDOW_WIDTH, ELEMENT_HEIGHT, ELEMENT_X_OFFSET);
-        adminInterface = new AdminInterface(panel, coffeeMachine.getControlPanel(), WINDOW_WIDTH, ELEMENT_HEIGHT, ELEMENT_X_OFFSET);
-        passwordPopup = new PasswordPopup();
         initializeUI();
+        clientInterface = new ClientInterface(panel, coffeeMachine, WINDOW_WIDTH, ELEMENT_HEIGHT, ELEMENT_X_OFFSET);
+        regimeButton = createRegimeButton();
+        adminInterface = new AdminInterface(panel, coffeeMachine.getControlPanel(), WINDOW_WIDTH, ELEMENT_HEIGHT, ELEMENT_X_OFFSET, regimeButton);
+        passwordPopup = new PasswordPopup();
     }
 
     public void loadGUI() {
@@ -71,10 +69,14 @@ public class VisualManager {
     }
 
     private void loadChangeRegimeButton() {
+        panel.add(regimeButton);
+    }
+
+    private JButton createRegimeButton() {
         regimeButton = new JButton("Admin Menu");
         regimeButton.setBounds(WINDOW_WIDTH - WINDOW_WIDTH / 5 - ELEMENT_X_OFFSET, WINDOW_HEIGHT - ELEMENT_HEIGHT * 2, WINDOW_WIDTH / 5, ELEMENT_HEIGHT);
         regimeButton.addActionListener(e -> toggleRegime());
-        panel.add(regimeButton);
+        return regimeButton;
     }
 
     private void toggleRegime() {
@@ -84,7 +86,6 @@ public class VisualManager {
                 return; // спира метода до тук
             }
         }
-
         regime = !regime;
         panel.removeAll();
         loadChangeRegimeButton();
