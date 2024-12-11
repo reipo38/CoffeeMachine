@@ -2,6 +2,8 @@ package com.greasy.fighters.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.*;
 
@@ -59,7 +61,9 @@ public class ClientInterface {
         ArrayList<ArrayList<String>> labelsList = new ArrayList<>();
         labelsList.add(new ArrayList<>(List.of("2", "1", "0.50", "0.20", "0.10", "0.05", "Drop")));  // Coin insertion buttons
         labelsList.add(new ArrayList<>(List.of("-", "+")));  // Sugar adjustment buttons
-        labelsList.add(new ArrayList<>(List.of(coffeeMachine.getCoffeeNames())));  // Coffee selection buttons
+        labelsList.add(IntStream.range(0, coffeeMachine.getCoffeeNames().length) // Iterate over the indices
+                .mapToObj(i -> coffeeMachine.getCoffeeNames()[i] + " " + coffeeMachine.getCoffeePrices()[i]) // Concatenate corresponding elements
+                .collect(Collectors.toCollection(ArrayList::new))); // Collect the result into an ArrayList
         return labelsList;
     }
 

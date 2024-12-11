@@ -144,12 +144,17 @@ public class CoffeeMachine {
 
     // Метод, който връща масив от имената на всички кафета, които се продават в машината, заедно с техните цени
     public String[] getCoffeeNames() {
-        int numCoffees = coffees.size();
-        String[] coffeeNames = new String[numCoffees];
-        for (int i = 0; i < numCoffees; i++) {
-            coffeeNames[i] = String.format("%s - %d%s", coffees.get(i).getName(), coffees.get(i).getPrice(), controlPanel.getMoneySymbol());
-        }
-        return coffeeNames;
+        return coffees.stream()
+                .map(Coffee::getName) // Extract the name from each Coffee object
+                .toArray(String[]::new); // Collect the results into an array
+
+    }
+
+    public Integer[] getCoffeePrices() {
+        return coffees.stream()
+                .map(Coffee::getPrice) // Extract the name from each Coffee object
+                .toArray(Integer[]::new); // Collect the results into an array
+
     }
 
     public int[] getCoins() {
