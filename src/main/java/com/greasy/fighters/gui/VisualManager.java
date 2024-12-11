@@ -48,7 +48,7 @@ public class VisualManager {
 
     public void setOutputText(String text) {
         clientInterface.setOutputText(text);
-        clearAfterTimeout();
+        //clearAfterTimeout();
     }
 
     private void initializeUI() {
@@ -108,6 +108,6 @@ public class VisualManager {
             public void run() {
                 clientInterface.setOutputText("");
             }
-        }, 5000);
+        }, 15000);
     }
 }

@@ -10,7 +10,7 @@ public class CoffeeMachine {
 
     private final ArrayList<Coffee> coffees;
     private final ControlPanel controlPanel = new ControlPanel(this);
-    private final int[] coins = new int[]{5, 10, 20, 50, 100, 200};
+    private final int[] coins = new int[]{200, 100, 50, 20, 10, 5};
 
     private int sugarNeeded;
 
@@ -61,33 +61,9 @@ public class CoffeeMachine {
     }
         public void returnMoney() {
         if (insertedMoney > 0) {
-            int[] coinCounts = calculateChange(insertedMoney);
-            StringBuilder changeMessage = new StringBuilder("Returning change:\n");
-
-            for (int i = coins.length - 1; i >= 0; i--) {
-                if (coinCounts[i] > 0) {
-                    if (coins[i] >= 100) {
-                        changeMessage.append(String.format("%d x %.2f BGN\n", coinCounts[i], coins[i] / 100.0));
-                    } else {
-                        changeMessage.append(String.format("%d x %d stotinki\n", coinCounts[i], coins[i]));
-                    }
-                }
-            }
-
-            Main.visualManager.setOutputText(changeMessage.toString());
+            Main.visualManager.setOutputText(calculateChange(insertedMoney));
             insertedMoney = 0;
         }
-    }
-
-    private int[] calculateChange(int amount) {
-        int[] coinCounts = new int[coins.length];
-        
-        for (int i = coins.length - 1; i >= 0; i--) {
-            coinCounts[i] = amount / coins[i];
-            amount %= coins[i];
-        }
-        
-        return coinCounts;
     }
 
     private void processCoffeePurchase(Coffee coffee) {
@@ -97,28 +73,33 @@ public class CoffeeMachine {
     }
 
     private void prepareCoffee(Coffee coffee) {
-        int change = insertedMoney - coffee.getPrice();
-        int[] coinCounts = calculateChange(change);
-        StringBuilder changeMessage = new StringBuilder();
+        Main.visualManager.setOutputText(
+                String.format("Your %s is ready. (%dg coffee, %dml water, %dg sugar%s%nDropping %s.",
+                        coffee.getName(), coffee.getCoffeeNeeded(), coffee.getWaterNeeded(), sugarNeeded, (coffee.hasMilk() ? String.format(", %dml milk)", controlPanel.getMilkNeeded()) : ")"), calculateChange(insertedMoney - coffee.getPrice())));
+    }
 
-        for (int i = coins.length - 1; i >= 0; i--) {
-            if (coinCounts[i] > 0) {
-                if (coins[i] >= 100) {
-                    changeMessage.append(String.format("%d x %.2f BGN, ", coinCounts[i], coins[i] / 100.0));
-                } else {
-                    changeMessage.append(String.format("%d x %d stotinki, ", coinCounts[i], coins[i]));
+    private String calculateChange(int amountMoney) {
+        StringBuilder str = new StringBuilder();
+        for(int i: coins){
+            if (controlPanel.getAmountOfCoins().get(i) != 0) {
+                int coinAmount = amountMoney/i;
+                if (coinAmount != 0) {
+                    str.append(String.format(moneyAsString(i, coinAmount)));
                 }
+                amountMoney %=i;
             }
         }
+        return str.toString();
 
-        if (changeMessage.length() > 0) {
-            changeMessage.setLength(changeMessage.length() - 2);
+
+    }
+
+    private String moneyAsString(int coinNominal, int moneyAmount) {
+        if (coinNominal >= 100) {
+            return String.format(" %d:coins:%d; ", coinNominal/100, moneyAmount);
         }
-        Main.visualManager.setOutputText(
-                String.format("Your %s is ready. (%dg coffee, %dml water, %dg sugar%s%nReturning change: %s",
-                        coffee.getName(), coffee.getCoffeeNeeded(), coffee.getWaterNeeded(), sugarNeeded, 
-                        (coffee.hasMilk() ? String.format(", %dml milk)", controlPanel.getMilkNeeded()) : ")"),
-                        changeMessage.toString()));
+        return String.format("  0.%d coins:%d ; ", coinNominal, moneyAmount);
+
     }
 
 

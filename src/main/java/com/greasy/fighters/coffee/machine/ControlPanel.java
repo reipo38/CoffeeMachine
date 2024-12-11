@@ -11,6 +11,20 @@ public class ControlPanel {
 
     private HashMap<String, Integer> consumables;
 
+    //TODO Krasi vurji tiq tupotii s jeison
+
+    private HashMap<Integer, Integer> amountOfCoins = createAmountOfCoins();
+    private HashMap<Integer, Integer> createAmountOfCoins() {
+        HashMap<Integer, Integer> amountOfCoins = new HashMap<>();
+        amountOfCoins.put(200, 0);
+        amountOfCoins.put(100, 0);
+        amountOfCoins.put(50, 10);
+        amountOfCoins.put(20, 10);
+        amountOfCoins.put(10, 10);
+        amountOfCoins.put(5, 10);
+        return amountOfCoins;
+    }
+
     private int milkNeeded;
 
     private int sugarChangeBy;
@@ -98,6 +112,10 @@ public class ControlPanel {
     public void changeConsumableValue(String consumable, int amount) {
         //TODO krasi opravi go tva da pishe promenite v na jason faila
         consumables.put(consumable, consumables.get(consumable) + amount);
+    }
+
+    public HashMap<Integer, Integer> getAmountOfCoins() {
+        return amountOfCoins;
     }
 
     public String[] getCoffeeNames() {

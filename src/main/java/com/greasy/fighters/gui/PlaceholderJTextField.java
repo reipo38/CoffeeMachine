@@ -6,9 +6,9 @@ import java.awt.event.FocusEvent;
 
 // Клас за текстово поле с поддържан placeholder текст
 class PlaceholderJTextField extends JTextField {
-    // Строка, която представлява placeholder текста
+    // Низ с текста, използван като placeholder
     private final String placeholder;
-    // Променлива, указваща дали показваме placeholder
+    // Променлива, указваща дали показва placeholder
     private boolean showingPlaceholder;
 
     // Конструктор, който приема текста на placeholder

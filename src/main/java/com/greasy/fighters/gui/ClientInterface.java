@@ -57,7 +57,7 @@ public class ClientInterface {
 
     private ArrayList<ArrayList<String>> createButtonLabels() {
         ArrayList<ArrayList<String>> labelsList = new ArrayList<>();
-        labelsList.add(new ArrayList<>(List.of(".05", ".10", ".20", ".50", "1", "2", "Drop")));  // Coin insertion buttons
+        labelsList.add(new ArrayList<>(List.of("2", "1", "0.50", "0.20", "0.10", "0.05", "Drop")));  // Coin insertion buttons
         labelsList.add(new ArrayList<>(List.of("-", "+")));  // Sugar adjustment buttons
         labelsList.add(new ArrayList<>(List.of(coffeeMachine.getCoffeeNames())));  // Coffee selection buttons
         return labelsList;
