@@ -25,30 +25,33 @@ public class AdminInterface {
     private final int elementHeight;
     private final int elementXOffset;
 
-    private String[] consumablesNames;
+    private final String[] consumablesNames;
 
-    private int[][] componentTypePerRow = new int[][]{
+    private final int[][] componentTypePerRow = new int[][]{
             new int[]{0, 1, 2, 2},
             new int[]{0, 2},
             new int[]{1, 2},
-            new int[]{1, 1, 1, 1}
+            new int[]{1, 1, 1, 1},
+            new int[]{2, 2}
     };
 
-    private String[][] componentTexts = new String[][]{
+    private final String[][] componentTexts = new String[][]{
             new String[]{"ILLEGAL_STATE", "Amount", "Add", "Remove"},
             new String[]{"ILLEGAL_STATE", "Delete"},
             new String[]{"Name", "Create"},
-            new String[]{"Price", "Coffee amount", "Has milk", "Water needed"}
+            new String[]{"Price", "Coffee amount", "Has milk", "Water needed"},
+            new String[]{"<-", "->"}
     };
 
-    private Component[][] components = new Component[][]{
+    private final Component[][] components = new Component[][]{
             new Component[4],
             new Component[2],
             new Component[2],
             new Component[4],
+            new Component[2]
     };
 
-    private String[] labelsTitles = new String[]{"Add/ Remove consumable:", "Delete Coffee:", "Add new Coffee:", "Statistics:"};
+    private final String[] labelsTitles = new String[]{"Add/ Remove consumable:", "Delete Coffee:", "Add new Coffee:", "Statistics:"};
 
     private final JPanel panel;
     private final JButton regimeButton;
@@ -123,6 +126,7 @@ public class AdminInterface {
                         Integer.parseInt(((PlaceholderJTextField) components[3][1]).getText()),     // coffeeNeeded
                         Boolean.parseBoolean(((PlaceholderJTextField) components[3][2]).getText()), // hasMilk
                         Integer.parseInt(((PlaceholderJTextField) components[3][3]).getText()));    // waterNeeded
+                //case 4 -> //TODO tuka trq da e logikata za smqna na statistikite. id=0 - nazad ; id=1 - napred
             }
             reloadPanel();
         } catch (NumberFormatException ignored){}
@@ -176,7 +180,7 @@ public class AdminInterface {
                 dataset
         );
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setBounds(elementXOffset, elementHeight*12, windowWidth - elementXOffset*2, elementHeight*6);
+        chartPanel.setBounds(elementXOffset, elementHeight*13, windowWidth - elementXOffset*2, elementHeight*5);
         panel.add(chartPanel);
     }
 }
