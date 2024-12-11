@@ -92,7 +92,7 @@ public class AdminInterface {
     private Component loadComponent(int i, int id) {
         return switch (componentTypePerRow[i][id]) {
             case 0 -> getComboBox(i);
-            case 1 -> new PlaceholderJTextField(componentTexts[i][id]);  // Get JTextField for type 1
+            case 1 -> new PlaceholderJTextField(componentTexts[i][id]);
             case 2 -> getButton(i, id);
             default -> throw new IllegalStateException("Unexpected value: " + id);
         };

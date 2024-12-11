@@ -109,7 +109,7 @@ public class CoffeeMachine {
     private String calculateChange(int amountMoney) {
         StringBuilder result = new StringBuilder(); // Създаване на StringBuilder. Използва се за по-оптимална конкатенация на низове
         for (int i : coins) { // Обхожда се масива, съдържащ номиналите на монетите. За всяка итерация i e един номинал
-            if (controlPanel.getAmountOfCoins().get(i) != 0) { // Проверка дали кафе машината има налични монети от този номинал. Ако няма, итерацията продължава със следващия номинал.
+            if (controlPanel.getAmountOfCoins().get(String.valueOf(i)) != 0) { // Проверка дали кафе машината има налични монети от този номинал. Ако няма, итерацията продължава със следващия номинал.
                 int coinAmount = amountMoney / i; // Изчисляване на броя монети от този номинал, които са нужни
                 if (coinAmount != 0) { // Проверка дали са нужни 0 монети. Ако не, към резултатния низ се конкатенира номинала монети и броя
                     result.append(String.format(moneyAsString(i, coinAmount)));
@@ -117,7 +117,8 @@ public class CoffeeMachine {
                 amountMoney %= i; // amountMoney става равно на остатъка при деление на използвания номинал
             }
         }
-        return result.toString(); // Връща се цял низ съдържащ всеки използван номинал, и броя монети от него.
+
+        return result.toString().isEmpty() ? "0" : result.toString(); // Връща се цял низ съдържащ всеки използван номинал, и броя монети от него.
 
 
     }

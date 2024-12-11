@@ -23,19 +23,7 @@ public class ControlPanel {
     private HashMap<String, Integer> consumables; // Речник със съставките в кафемашината
 
     // Речник, който пази количеството монети от всеки номинал. Логиката е временна. Ще бъде променена скоро
-    private HashMap<Integer, Integer> amountOfCoins = createAmountOfCoins();
-
-    private HashMap<Integer, Integer> createAmountOfCoins() {
-        // HashMap<Integer, Integer> amountOfCoins = new HashMap<>();
-        // Инициализация на количествата монети от различни номинали
-        // amountOfCoins.put(200, 0); // 2 лева
-        // amountOfCoins.put(100, 0); // 1 лев
-        // amountOfCoins.put(50, 10); // 50 стотинки
-        // amountOfCoins.put(20, 10); // 20 стотинки
-        // amountOfCoins.put(10, 10); // 10 стотинки
-        // amountOfCoins.put(5, 10);  // 5 стотинки
-        return DataHandler.loadMoney();
-    }
+    private HashMap<String, Integer> amountOfCoins;
 
     private int milkNeeded; // Количеството мляко, което е нужно за всяко кафе с мляко
 
@@ -54,7 +42,8 @@ public class ControlPanel {
     // Конструктор на ControlPanel, инициализиращ кафемашината и зареждащ съставките
     public ControlPanel(CoffeeMachine coffeeMachine) {
         this.coffeeMachine = coffeeMachine;
-        this.consumables = DataHandler.loadConsumables(); // Зареждаме съставките от външно хранилище (например JSON файл)
+        consumables = DataHandler.loadConsumables(); // Зареждаме съставките от външно хранилище (например JSON файл)
+        amountOfCoins = DataHandler.loadCoins();
     }
 
     // Метод за добавяне на ново кафе към кафемашината
@@ -140,7 +129,7 @@ public class ControlPanel {
     }
 
     // Метод за получаване на монетите по номинали
-    public HashMap<Integer, Integer> getAmountOfCoins() {
+    public HashMap<String, Integer> getAmountOfCoins() {
         return amountOfCoins;
     }
 

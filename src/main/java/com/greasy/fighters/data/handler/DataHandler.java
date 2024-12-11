@@ -39,6 +39,10 @@ public class DataHandler {
         return loadHashMapStringInteger(consumablesPath);
     }
 
+    public static HashMap<String, Integer> loadCoins() {
+        return loadHashMapStringInteger(moneyPath);
+    }
+
     public static void saveConsumables(HashMap<String, Integer> consumables) {
         saveToJson(consumablesPath, consumables);
     }
@@ -55,7 +59,8 @@ public class DataHandler {
         ArrayList<Coffee> coffeeTypes;
 
         try {
-            coffeeTypes = objectMapper.readValue(new File(coffeesPath.toString()), new TypeReference<ArrayList<Coffee>>() {});
+            coffeeTypes = objectMapper.readValue(new File(coffeesPath.toString()), new TypeReference<>() {
+            });
         } catch (IOException e ) {
             throw new RuntimeException(e);
         }
@@ -127,8 +132,8 @@ public class DataHandler {
             throw new RuntimeException(e);
         }
     }
-
-    public static HashMap<Integer, Integer> loadMoney() {
+    /*
+    public static HashMap<String, Integer> loadMoney() {
         HashMap<String, Integer> originalHashMap = loadHashMapStringInteger(moneyPath); // * JSON е тъп и не може да се използва нещо различно от низ като ключ
 
         HashMap<Integer, Integer> moneyHashMap = new HashMap<>();
@@ -136,13 +141,13 @@ public class DataHandler {
         for (Map.Entry<String, Integer> entry : originalHashMap.entrySet()) {
             /*
              * може би трябва да се премести в друг метод
-             */
             Integer newKey = entry.getKey().length();
             moneyHashMap.put(newKey, entry.getValue());
         }
 
         return moneyHashMap;
     }
+    */
 
     private static void saveToJson(Path path, Object data) {
         File file = new File(path.toString());
