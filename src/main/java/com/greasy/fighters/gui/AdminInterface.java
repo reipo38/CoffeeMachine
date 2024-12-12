@@ -1,5 +1,6 @@
 package com.greasy.fighters.gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -205,6 +206,7 @@ public class AdminInterface {
                 "Ordered",
                 dataset
         );
+        chart.setBackgroundPaint(new Color(238, 238, 238)); // * за да се слива с фона
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setBounds(elementXOffset, elementHeight * 13, windowWidth - elementXOffset * 2, elementHeight * 5);
         panel.add(chartPanel); // Добавяне на диаграмата в панела
