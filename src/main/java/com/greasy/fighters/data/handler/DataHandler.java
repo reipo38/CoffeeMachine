@@ -47,6 +47,10 @@ public class DataHandler {
         saveToJson(consumablesPath, consumables);
     }
 
+    public static void saveCoins(HashMap<String, Integer> coins) {
+        saveToJson(moneyPath, coins);
+    }
+
     private static String getDateMonthYear() {
         LocalDateTime now = LocalDateTime.now();
         return now.getMonthValue() + "." + now.getDayOfMonth() + "." + now.getYear();
@@ -122,7 +126,7 @@ public class DataHandler {
                 new TypeReference<HashMap<String, Integer>>() {}
             );
 
-            System.out.println(hashMap.toString());
+            //System.out.println(hashMap.toString());
 
             return hashMap;
         } catch (FileNotFoundException e) {

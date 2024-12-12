@@ -1,21 +1,23 @@
 package com.greasy.fighters.gui;
 
 import java.awt.Component;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.greasy.fighters.Enums;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import com.greasy.fighters.coffee.machine.ControlPanel;
-import com.greasy.fighters.coffee.machine.ControlPanel.Consumable;
 import com.greasy.fighters.data.handler.DataHandler;
 
 public class AdminInterface {
@@ -24,8 +26,6 @@ public class AdminInterface {
     private final int windowWidth;
     private final int elementHeight;
     private final int elementXOffset;
-
-    private final String[] consumablesNames;
 
     private final int[][] componentTypePerRow = new int[][]{
             new int[]{0, 1, 2, 2},
@@ -63,13 +63,12 @@ public class AdminInterface {
         this.elementHeight = elementHeight;
         this.elementXOffset = elementXOffset;
         this.regimeButton = regimeButton;
-        consumablesNames = controlPanel.getConsumablesNames();
-
         this.panel.setLayout(null);
     }
 
     protected void loadAdminInterface() {
-        loadConsumables();
+        loadConsumables(true);
+        loadConsumables(false);
         loadLabels();
         for (int i = 0; i < componentTypePerRow.length; i++) {
             loadComponentsRow(i);
@@ -99,13 +98,10 @@ public class AdminInterface {
     }
 
     private JComboBox<String> getComboBox(int i) {
-        String[] items = (i == 0) ? consumablesNames : controlPanel.getCoffeeNames();
-        JComboBox<String> comboBox = new JComboBox<>(items);
-        comboBox.addActionListener(e -> {
-            String selectedItem = (String) comboBox.getSelectedItem();
-            System.out.println("Selected: " + selectedItem);
-        });
-        return comboBox;
+        String[] items = (i == 0) ? Stream.concat(Arrays.stream(Enums.Consumables.stringValues()).skip(1), Arrays.stream(Enums.Nominals.stringValues()))
+                .toArray(String[]::new) : controlPanel.getCoffeeNames();
+
+        return new JComboBox<>(items);
     }
 
     private Component getButton(int i, int id) {
@@ -118,7 +114,7 @@ public class AdminInterface {
     private void handleButtonAction(int i, int id) {
         try {
             switch (i) {
-                case 0 -> controlPanel.changeConsumableValue((String) ((JComboBox<String>) components[0][0]).getSelectedItem(), Integer.parseInt(((PlaceholderJTextField) components[0][1]).getText()) * (id == 2 ? 1 : -1));
+                case 0 -> controlPanel.changePropertiesValue( (String) ((JComboBox<String>) components[0][0]).getSelectedItem(), Integer.parseInt(((PlaceholderJTextField) components[0][1]).getText()) * (id == 2 ? 1 : -1));
                 case 1 -> controlPanel.deleteCoffeeByName( (String) ((JComboBox<String>) components[1][0]).getSelectedItem());
                 case 2 -> controlPanel.addNewCoffee(
                         ((PlaceholderJTextField) components[2][0]).getText(),                       // name
@@ -139,12 +135,13 @@ public class AdminInterface {
         panel.repaint();
     }
 
-    private void loadConsumables() {
-        Consumable[] consumables = Consumable.values();
-        for (int i = 0; i < consumables.length; i++) {
-            Consumable consumable = consumables[i];
-            JLabel label = new JLabel(String.format("%s available: %d", consumable.toString(), controlPanel.getConsumableValue(consumable)));
-            label.setBounds(elementXOffset, elementHeight/2 + elementHeight / 2 * i, windowWidth, elementHeight);
+    private void loadConsumables(boolean left) {
+        String[] entries = left ? Enums.Consumables.stringValues() : Enums.Nominals.stringValues();
+        for (int i = 0; i < entries.length; i++) {
+            String entry = entries[i];
+            int value = left ? controlPanel.getConsumableAmount(entry) : controlPanel.getCoinAmount(entry);
+            JLabel label = new JLabel(String.format("%s available: %d", entry, value));
+            label.setBounds(left ? elementXOffset : windowWidth/2, elementHeight/2 + elementHeight / 2 * i, windowWidth, elementHeight);
             panel.add(label);
         }
     }

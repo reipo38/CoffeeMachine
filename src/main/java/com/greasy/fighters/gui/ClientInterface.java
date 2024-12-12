@@ -1,12 +1,12 @@
 package com.greasy.fighters.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Arrays;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.swing.*;
 
+import com.greasy.fighters.Enums;
 import com.greasy.fighters.coffee.machine.CoffeeMachine;
 
 public class ClientInterface {
@@ -18,6 +18,8 @@ public class ClientInterface {
 
     private JLabel outputLabel;
     private JTextArea outputTextArea;
+
+    private String[][] buttonLabels;
 
     private JLabel[] labels;
 
@@ -31,40 +33,27 @@ public class ClientInterface {
         this.elementXOffset = elementXOffset;
     }
 
-    private JButton createButton(int index, int buttonIndex, boolean isCoffeeButton, int buttonWidth, ArrayList<ArrayList<String>> buttonLabels) {
-        String buttonText = buttonLabels.get(index).get(buttonIndex);
-        JButton button = new JButton(buttonText);
-    
-        int xPosition = elementXOffset + (isCoffeeButton ? buttonIndex % 2 : buttonIndex) * buttonWidth;
-        int yPosition = calculateButtonYPosition(index, buttonIndex, isCoffeeButton);
-    
-        button.setBounds(xPosition, yPosition, buttonWidth - elementXOffset, elementHeight);
-        button.addActionListener(e -> handleButtonAction(index, buttonIndex));
-        button.setFocusable(false); 
-    
-        return button;
-    }
     protected void loadClientInterface() {
-        ArrayList<ArrayList<String>> buttonLabels = createButtonLabels();
-        int[] buttonCounts = new int[]{7, 2, buttonLabels.get(2).size()};  // Coin buttons, Sugar buttons, Coffee buttons
+        buttonLabels = createButtonLabels();
+        int[] buttonCounts = new int[]{7, 2, buttonLabels[2].length};  // Coin buttons, Sugar buttons, Coffee buttons
         String[] labelsTitles = {"Insert coins (currently 0):", "Change sugar (currently 0%):", "Coffees:"};
         int labelsCount = labelsTitles.length;
         labels = new JLabel[labelsCount];
         for (int i = 0; i < labelsCount; i++) {
             loadLabel(i, labelsTitles);
-            loadButtons(i, buttonCounts, buttonLabels);
+            loadButtons(i, buttonCounts);
         }
         loadOutputArea();
     }
 
-    private ArrayList<ArrayList<String>> createButtonLabels() {
-        ArrayList<ArrayList<String>> labelsList = new ArrayList<>();
-        labelsList.add(new ArrayList<>(List.of("2", "1", "0.50", "0.20", "0.10", "0.05", "Drop")));  // Coin insertion buttons
-        labelsList.add(new ArrayList<>(List.of("-", "+")));  // Sugar adjustment buttons
-        labelsList.add(IntStream.range(0, coffeeMachine.getCoffeeNames().length) // Iterate over the indices
-                .mapToObj(i -> coffeeMachine.getCoffeeNames()[i] + " " + coffeeMachine.getCoffeePrices()[i]) // Concatenate corresponding elements
-                .collect(Collectors.toCollection(ArrayList::new))); // Collect the result into an ArrayList
-        return labelsList;
+    private String[][] createButtonLabels() {
+        return new String[][]{
+                Stream.concat(Arrays.stream(Enums.Nominals.stringValues()), Stream.of("Drop")).toArray(String[]::new),
+                new String[]{"-", "+"},
+                IntStream.range(0, coffeeMachine.getCoffeeNames().length)
+                        .mapToObj(i -> coffeeMachine.getCoffees().get(i).getName() + " - " + coffeeMachine.getCoffees().get(i).priceString() + coffeeMachine.getControlPanel().getMoneySymbol())
+                        .toArray(String[]::new)
+        };
     }
 
     private void loadLabel(int index, String[] labelsTitles) {
@@ -78,14 +67,14 @@ public class ClientInterface {
         return elementHeight * 3 + elementHeight * 2 * index - elementHeight / 2;
     }
 
-    private void loadButtons(int index, int[] buttonCounts, ArrayList<ArrayList<String>> buttonLabels) {
+    private void loadButtons(int index, int[] buttonCounts) {
         boolean isCoffeeButton = index == 2;
         int buttonsInRow = isCoffeeButton ? 2 : buttonCounts[index];
         int totalButtons = buttonCounts[index];
         int buttonWidth = (windowWidth - elementXOffset) / buttonsInRow;
 
         for (int i = 0; i < totalButtons; i++) {
-            JButton button = createButton(index, i, isCoffeeButton, buttonWidth, buttonLabels);
+            JButton button = createButton(index, i, isCoffeeButton, buttonWidth);
             panel.add(button);
         }
     }
@@ -98,6 +87,20 @@ public class ClientInterface {
             yPosition += (buttonIndex / 2) * (elementHeight + elementHeight / 2);
         }
         return yPosition;
+    }
+
+    private JButton createButton(int index, int buttonIndex, boolean isCoffeeButton, int buttonWidth) {
+        String buttonText = buttonLabels[index][buttonIndex];
+        JButton button = new JButton(buttonText);
+
+        int xPosition = elementXOffset + (isCoffeeButton ? buttonIndex % 2 : buttonIndex) * buttonWidth;
+        int yPosition = calculateButtonYPosition(index, buttonIndex, isCoffeeButton);
+
+        button.setBounds(xPosition, yPosition, buttonWidth - elementXOffset, elementHeight);
+        button.addActionListener(e -> handleButtonAction(index, buttonIndex));
+        button.setFocusable(false);
+
+        return button;
     }
 
     private void handleButtonAction(int index, int buttonIndex) {
@@ -113,7 +116,7 @@ public class ClientInterface {
             coffeeMachine.returnMoney();
             labels[0].setText("Insert coins (currently 0):");
         } else {
-            coffeeMachine.insertMoney(coffeeMachine.getCoins()[buttonIndex]);
+            coffeeMachine.insertMoney(Enums.Nominals.values()[buttonIndex]);
             labels[0].setText(String.format("Insert coins (currently %d):", coffeeMachine.getInsertedMoney()));
         }
     }
@@ -137,7 +140,7 @@ public class ClientInterface {
 
     private JLabel createLabel() {
         JLabel label = new JLabel("Output:");
-        label.setBounds(elementXOffset, elementHeight/2, windowWidth - elementXOffset*2, elementHeight/2);
+        label.setBounds(elementXOffset, elementHeight / 2, windowWidth - elementXOffset * 2, elementHeight / 2);
         return label;
     }
 
@@ -152,5 +155,4 @@ public class ClientInterface {
     public void setOutputText(String text) {
         outputTextArea.setText(text);
     }
-
 }

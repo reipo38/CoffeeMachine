@@ -60,6 +60,10 @@ public class Coffee {
         return hasMilk;
     }
 
+    public String priceString() {
+        return String.format("%d.%d", price / 100, price % 100);
+    }
+
     @Override
     public String toString() {
         return String.format("Name: %s%nPrice: %d%nCoffee: %d%nWater: %d%nMilk: %s", name, price, coffeeNeeded, waterNeeded, hasMilk);

@@ -1,7 +1,9 @@
 package com.greasy.fighters.coffee.machine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import com.greasy.fighters.Enums;
 import com.greasy.fighters.Main;
 import com.greasy.fighters.data.handler.DataHandler;
 import com.greasy.fighters.statistic.Statistics;
@@ -22,16 +24,17 @@ public class CoffeeMachine {
 
     private final ArrayList<Coffee> coffees;
     private final ControlPanel controlPanel = new ControlPanel(this);
-    private final int[] coins = new int[]{200, 100, 50, 20, 10, 5};
 
-    private int sugarNeeded;
+    private int sugarSelected;
 
+    private final HashMap<String, Integer> insertedCoins;
     private int insertedMoney;
 
 
     // Конструктор. Приема като параметър списъка с наличните кафета.
     public CoffeeMachine(ArrayList<Coffee> coffees) {
         this.coffees = coffees;
+        insertedCoins = new HashMap<>();
     }
 
     // Метод за добавяне на ново кафе
@@ -52,15 +55,16 @@ public class CoffeeMachine {
      */
     public void changeSugarQuantity(boolean increment) {
         if (increment) {
-            if (sugarNeeded != controlPanel.getSugarMax()) sugarNeeded += controlPanel.getSugarChangeBy();
+            if (sugarSelected != controlPanel.getSugarMax()) sugarSelected += controlPanel.getSugarChangeBy();
         } else {
-            if (sugarNeeded != 0) sugarNeeded -= controlPanel.getSugarChangeBy();
+            if (sugarSelected != 0) sugarSelected -= controlPanel.getSugarChangeBy();
         }
     }
 
     // Добавяне на пари
-    public void insertMoney(int amount) {
-        insertedMoney += amount;
+    public void insertMoney(Enums.Nominals nominal) {
+        insertedMoney += nominal.toInt();
+        insertedCoins.put(nominal.toString(), insertedCoins.getOrDefault(nominal.toString(), 0) + 1);
     }
 
     // Логика за купуване на кафе
@@ -73,7 +77,7 @@ public class CoffeeMachine {
         Coffee coffee = coffees.get(id);
         if (controlPanel.ingredientsAvailable(coffee)) { // Проверка дали нужните съставки са налични
             if (hasSufficientMoney(coffee)) { // Проверка дали са вкарани достатъчно пари
-                processCoffeePurchase(coffee); // Кафето се приготва
+                prepareAndChargeForCoffee(coffee); // Кафето се приготва
                 Statistics.addCoffeeToDailyStatistic(coffee); // Покупката се отбелязва в статистиките
             } else { // Ако парите не са достатъчно се изписва надпис.
                 Main.visualManager.setOutputText("Not enough money.");
@@ -85,48 +89,51 @@ public class CoffeeMachine {
 
     // Връщане на вкараните в машината пари.
     public void returnMoney() {
+        HashMap<String, Integer> coins = getChangeHashMap(insertedMoney);
         if (insertedMoney > 0) {
-            Main.visualManager.setOutputText(calculateChange(insertedMoney));
+            Main.visualManager.setOutputText(getCoinsAmountString(coins));
             insertedMoney = 0;
         }
     }
 
     // Приготвяне на кафето
-    private void processCoffeePurchase(Coffee coffee) {
-        controlPanel.updateInternalValues(coffee, sugarNeeded); // Промените в наличните съставки се отбелязват
-        prepareCoffee(coffee); // Извиква се метода, който принтира информация за покупката на кафето и върнатото ресто
+    private void prepareAndChargeForCoffee(Coffee coffee) {
+        controlPanel.updateInternalValues(coffee, insertedCoins); // Промените в наличните съставки се отбелязват
+        HashMap<String, Integer> change = getChangeHashMap(insertedMoney - coffee.getPrice());
+        controlPanel.dropCoins(change);
+        prepareCoffee(coffee, getCoinsAmountString(change)); // Извиква се метода, който принтира информация за покупката на кафето и върнатото ресто
         insertedMoney = 0; // insertedMoney става нула, защото след покупка автоматично се връща рестото
     }
 
     // Метод, който принтира информация за кафето и върнатото ресто
-    private void prepareCoffee(Coffee coffee) {
+    private void prepareCoffee(Coffee coffee, String change) {
         Main.visualManager.setOutputText(
                 String.format("Your %s is ready. (%dg coffee, %dml water, %dg sugar%s%nDropping %s.",
-                        coffee.getName(), coffee.getCoffeeNeeded(), coffee.getWaterNeeded(), sugarNeeded, (coffee.hasMilk() ? String.format(", %dml milk)", controlPanel.getMilkNeeded()) : ")"), calculateChange(insertedMoney - coffee.getPrice())));
+                        coffee.getName(), coffee.getCoffeeNeeded(), coffee.getWaterNeeded(), sugarSelected, (coffee.hasMilk() ? String.format(", %dml milk)", controlPanel.getMilkNeeded()) : ")"), change));
     }
 
-    // Метод за изчисляване на рестото. Имплементация на Евристичния алгоритъм за номиналите на монетите (Вж. Задачи::Тема_07 и Лекции::Тема_05 от УАСД (3-ти курс))
-    private String calculateChange(int amountMoney) {
-        StringBuilder result = new StringBuilder(); // Създаване на StringBuilder. Използва се за по-оптимална конкатенация на низове
-        for (int i : coins) { // Обхожда се масива, съдържащ номиналите на монетите. За всяка итерация i e един номинал
-            if (controlPanel.getAmountOfCoins().get(String.valueOf(i)) != 0) { // Проверка дали кафе машината има налични монети от този номинал. Ако няма, итерацията продължава със следващия номинал.
-                int coinAmount = amountMoney / i; // Изчисляване на броя монети от този номинал, които са нужни
+    private HashMap<String, Integer> getChangeHashMap(int amount) {
+        HashMap<String, Integer> coins = new HashMap<>();
+        for (Enums.Nominals nominal : Enums.Nominals.values()) { // Обхожда се масива, съдържащ номиналите на монетите. За всяка итерация i e един номинал
+            if (controlPanel.getCoins().get(nominal.toString()) != 0) { // Проверка дали кафе машината има налични монети от този номинал. Ако няма, итерацията продължава със следващия номинал.
+                int coinAmount = amount / nominal.toInt(); // Изчисляване на броя монети от този номинал, които са нужни
                 if (coinAmount != 0) { // Проверка дали са нужни 0 монети. Ако не, към резултатния низ се конкатенира номинала монети и броя
-                    result.append(String.format(moneyAsString(i, coinAmount)));
+                    coins.put(nominal.toString(), coinAmount);
                 }
-                amountMoney %= i; // amountMoney става равно на остатъка при деление на използвания номинал
+                amount %= nominal.toInt(); // amountMoney става равно на остатъка при деление на използвания номинал
             }
         }
-
-        return result.toString().isEmpty() ? "0" : result.toString(); // Връща се цял низ съдържащ всеки използван номинал, и броя монети от него.
-
-
+        return coins;
     }
 
     // Помощен метод за calculateChange(), който форматира номинал и брой от него в един низ.
-    private String moneyAsString(int coinNominal, int moneyAmount) {
-        // Ако ниминалът е сто или по-голям (тоест 1 или 2 лева), той се дели на сто преди да се принтира за да може резултатът да се изкарва в левове, вместо в стотинки
-        return String.format("  %s%d coins:%d ; ", (coinNominal >= 100 ? coinNominal / 100 : "0."), coinNominal, moneyAmount);
+    private String getCoinsAmountString(HashMap<String, Integer> coins) {
+        StringBuilder result = new StringBuilder();
+        for (HashMap.Entry<String, Integer> entry : coins.entrySet()) {
+            result.append(String.format("  %s coins:%d ; ", entry.getKey(), entry.getValue()));
+        }
+        String resultStr = result.toString();
+        return resultStr.isEmpty() ? "0" : resultStr;
     }
 
     // Метод за проверка дали са вкарани достатъчно пари за поръчка на кафето
@@ -146,25 +153,14 @@ public class CoffeeMachine {
     // Метод, който връща масив от имената на всички кафета, които се продават в машината, заедно с техните цени
     public String[] getCoffeeNames() {
         return coffees.stream()
-                .map(Coffee::getName) // Extract the name from each Coffee object
-                .toArray(String[]::new); // Collect the results into an array
+                .map(Coffee::getName)
+                .toArray(String[]::new);
 
-    }
-
-    public Integer[] getCoffeePrices() {
-        return coffees.stream()
-                .map(Coffee::getPrice) // Extract the name from each Coffee object
-                .toArray(Integer[]::new); // Collect the results into an array
-
-    }
-
-    public int[] getCoins() {
-        return coins;
     }
 
     // Метод за показване на процента захар. Тя не се изписва като грамаж, а като процент от максималното количество захар (което се определя от controlPanel)
     public int getSugarPercentage() {
-        return (sugarNeeded * 100) / controlPanel.getSugarMax();
+        return (sugarSelected * 100) / controlPanel.getSugarMax();
     }
 
     // Метод за търсене на кафе по неговото име
@@ -175,5 +171,13 @@ public class CoffeeMachine {
             }
         }
         return null;
+    }
+
+    public ArrayList<Coffee> getCoffees() {
+        return coffees;
+    }
+
+    public int getSugarSelected() {
+        return sugarSelected;
     }
 }

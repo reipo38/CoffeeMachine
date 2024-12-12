@@ -1,13 +1,15 @@
 package com.greasy.fighters.coffee.machine;
 
 import java.util.HashMap;
+import java.util.Map;
+
+import com.greasy.fighters.Enums;
 import com.greasy.fighters.data.handler.DataHandler;
 
 public class ControlPanel {
     /***
      * Клас ControlPanel. Отговаря за администраторската логика в кафемашината. Управлява се количествата на всички съставки,
      * общият брой пари, максималното количество захар, използваното количество мляко и т.н.
-     *
      * Полета:
      * moneySymbol - лесен начин за промяна на символа за парите (например "лв", "bgn")
      * coffeeMachine - кафемашината, която този контролен панел управлява
@@ -16,34 +18,26 @@ public class ControlPanel {
      * sugarMax - максималното количество захар, което може да бъде избрано от потребителя
      * sugarChangeBy - количество захар, с което избраното количество се променя. То винаги е една пета от максималното количество захар
      */
-    private String moneySymbol = "bgn"; // Символ за парите (може да бъде променен)
+    private final String moneySymbol = "bgn"; // Символ за парите (може да бъде променен)
 
-    private CoffeeMachine coffeeMachine; // Инстанция на кафемашината, която управляваме
+    private final CoffeeMachine coffeeMachine; // Инстанция на кафемашината, която управляваме
 
-    private HashMap<String, Integer> consumables; // Речник със съставките в кафемашината
+    private final HashMap<String, Integer> consumables; // Речник със съставките в кафемашината
 
     // Речник, който пази количеството монети от всеки номинал. Логиката е временна. Ще бъде променена скоро
-    private HashMap<String, Integer> amountOfCoins;
+    private final HashMap<String, Integer> coins;
 
     private int milkNeeded; // Количеството мляко, което е нужно за всяко кафе с мляко
 
     private int sugarChangeBy; // Количеството захар, с което се променя избора за захар
     private int sugarMax; // Максималното количество захар, което може да бъде избрано
 
-    // Изброими стойности за различните видове съставки в кафемашината
-    public enum Consumable {
-        Money,   // Парите в кафемашината
-        Coffee,  // Кафето (боб, смляно кафе)
-        Water,   // Водата
-        Milk,    // Млякото
-        Sugar    // Захарта
-    }
-
     // Конструктор на ControlPanel, инициализиращ кафемашината и зареждащ съставките
     public ControlPanel(CoffeeMachine coffeeMachine) {
         this.coffeeMachine = coffeeMachine;
-        consumables = DataHandler.loadConsumables(); // Зареждаме съставките от външно хранилище (например JSON файл)
-        amountOfCoins = DataHandler.loadCoins();
+        this.consumables = DataHandler.loadConsumables(); // Зареждаме съставките от външно хранилище (например JSON файл)
+        this.coins = DataHandler.loadCoins();
+        updateTotalMoneyAmount();
     }
 
     // Метод за добавяне на ново кафе към кафемашината
@@ -59,21 +53,85 @@ public class ControlPanel {
 
     // Метод за проверка дали всички нужни съставки за приготвянето на кафе са налични
     public boolean ingredientsAvailable(Coffee coffee) {
-        // Проверяваме дали имаме достатъчно кафе, вода и евентуално мляко
-        return consumables.get("Coffee") >= coffee.getCoffeeNeeded() &&
-                ((coffee.hasMilk() && consumables.get("Milk") >= milkNeeded) || !coffee.hasMilk());
+        return isEnoughConsumable(Enums.Consumables.COFFEE.toString(), coffee.getCoffeeNeeded()) &&
+                (!coffee.hasMilk() || isEnoughConsumable(Enums.Consumables.MILK.toString(), milkNeeded)) &&
+                isEnoughConsumable(Enums.Consumables.WATER.toString(), coffee.getWaterNeeded()) &&
+                isEnoughConsumable(Enums.Consumables.SUGAR.toString(), coffeeMachine.getSugarSelected());
     }
 
-    // Метод за актуализиране на вътрешните стойности на съставките, когато се приготвя кафе
-    public void updateInternalValues(Coffee coffee, int sugar) {
-        // Обновяваме съставките (намаляваме количеството на използваните съставки)
-        consumables.put("Money", consumables.get("Money") + coffee.getPrice()); // Добавяме стойността на кафето
-        consumables.put("Coffee", consumables.get("Coffee") - coffee.getCoffeeNeeded()); // Използваме количество кафе
-        if (coffee.hasMilk()) {
-            consumables.put("Milk", consumables.get("Milk") - milkNeeded); // Използваме мляко, ако кафето го съдържа
+    // Примерен метод, където всички промени се обработват в една точка
+    public void updateInternalValues(Coffee coffee, HashMap<String, Integer> coins) {
+        // Обновяваме съставките въз основа на кафето и захарта
+        for (Enums.Consumables consumable : Enums.Consumables.values()) {
+            if (consumable == Enums.Consumables.MONEY) {
+                continue;  // Пропускаме парите тук
+            }
+            updateConsumable(consumable, coffee);
         }
-        consumables.put("Water", consumables.get("Water") - coffee.getWaterNeeded()); // Използваме вода
-        consumables.put("Sugar", consumables.get("Sugar") - sugar); // Използваме захар
+
+        changeCoinsAmount(coins, true);
+    }
+
+    private boolean isEnoughConsumable(String consumableKey, int amountNeeded) {
+        return consumables.getOrDefault(consumableKey, 0) >= amountNeeded;
+    }
+
+    // Метод за промяна на количеството монети и актуализиране на парите в една централизирана точка
+    private void changeCoinsAmount(HashMap<String, Integer> coins, boolean add) {
+        for (Map.Entry<String, Integer> entry : coins.entrySet()) {
+            int newAmount = this.coins.getOrDefault(entry.getKey(), 0) + entry.getValue() * (add ? 1 : -1);
+            this.coins.put(entry.getKey(), newAmount);
+        }
+        // Актуализиране на стойността на парите след всички промени
+        updateTotalMoneyAmount();
+    }
+
+    // Метод за актуализиране на стойността на парите в една централизирана точка
+    private void updateTotalMoneyAmount() {
+        int money = coins.entrySet().stream()
+                .mapToInt(entry -> parseCoinAmount(entry.getKey()) * entry.getValue())
+                .sum();
+
+        consumables.put(Enums.Consumables.MONEY.toString(), money);
+        DataHandler.saveConsumables(consumables);
+    }
+
+    private void updateConsumable(Enums.Consumables consumable, Coffee coffee) {
+        int amountToDeduct = switch (consumable) {
+            case COFFEE -> coffee.getCoffeeNeeded();
+            case MILK -> coffee.hasMilk() ? milkNeeded : 0;
+            case WATER -> coffee.getWaterNeeded();
+            case SUGAR ->  coffeeMachine.getSugarSelected();
+            default -> 0;
+        };
+
+        consumables.put(consumable.toString(), consumables.get(consumable.toString()) - amountToDeduct);
+    }
+
+    // Метод за актуализиране на количествата монети
+    public void dropCoins(HashMap<String, Integer> coins) {
+        changeCoinsAmount(coins, false);
+    }
+
+    // Метод за извличане на стойността на монетата
+    private int parseCoinAmount(String coin) {
+        if (coin.length() > 1) {
+            return Integer.parseInt(coin.substring(2));
+        } else {
+            return Integer.parseInt(coin) + 100;
+        }
+    }
+
+    // Метод за промяна на стойността на съставка
+    public void changePropertiesValue(String property, int amount) {  //TODO TOQ METOD TUKA E KENSUR AMA TRQ PYRVO TOQ HASHMAP DA SE NAPRAVI S ENUM KLYUCHOVE
+        if (property.matches("-?\\d+(\\.\\d+)?")) {
+            coins.put(property, coins.get(property) + amount);
+            updateTotalMoneyAmount();
+        } else {
+            consumables.put(property, consumables.get(property) + amount);
+        }
+        DataHandler.saveConsumables(consumables);
+        DataHandler.saveCoins(coins);
     }
 
     // Метод за получаване на символа за парите
@@ -107,30 +165,18 @@ public class ControlPanel {
         this.milkNeeded = milkNeeded;
     }
 
-    // Метод за получаване на имената на всички съставки
-    public String[] getConsumablesNames() {
-        return new String[]{"Money", "Coffee", "Water", "Milk", "Sugar"};
-    }
-
     // Метод за получаване на количеството на дадена съставка
-    public int getConsumableValue(Consumable consumable) {
-        try {
-            return consumables.get(consumable.toString()); // Връщаме стойността на съставката от речника
-        } catch (Exception e) {
-            System.out.println("Consumable " + consumable.toString() + " is not found!"); // Ако не е намерена съставката
-            throw new RuntimeException(e);
-        }
+    public int getConsumableAmount(String consumable) {
+        return consumables.get(consumable); // Връщаме стойността на съставката от речника
     }
 
-    // Метод за промяна на стойността на съставка
-    public void changeConsumableValue(String consumable, int amount) {
-        consumables.put(consumable, consumables.get(consumable) + amount); // Променяме количеството на съставката
-        DataHandler.saveConsumables(consumables);
+    public int getCoinAmount(String coinNominal) {
+        return coins.get(coinNominal);
     }
 
     // Метод за получаване на монетите по номинали
-    public HashMap<String, Integer> getAmountOfCoins() {
-        return amountOfCoins;
+    public HashMap<String, Integer> getCoins() {
+        return coins;
     }
 
     // Метод за получаване на имената на наличните кафета
