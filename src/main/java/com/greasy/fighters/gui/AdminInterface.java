@@ -11,7 +11,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.greasy.fighters.Enums;
+import com.greasy.fighters.enums.Consumables;
+import com.greasy.fighters.enums.Nominals;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -98,7 +99,7 @@ public class AdminInterface {
     }
 
     private JComboBox<String> getComboBox(int i) {
-        String[] items = (i == 0) ? Stream.concat(Arrays.stream(Enums.Consumables.stringValues()).skip(1), Arrays.stream(Enums.Nominals.stringValues()))
+        String[] items = (i == 0) ? Stream.concat(Arrays.stream(Consumables.stringValues()).skip(1), Arrays.stream(Nominals.stringValues()))
                 .toArray(String[]::new) : controlPanel.getCoffeeNames();
 
         return new JComboBox<>(items);
@@ -136,7 +137,7 @@ public class AdminInterface {
     }
 
     private void loadConsumables(boolean left) {
-        String[] entries = left ? Enums.Consumables.stringValues() : Enums.Nominals.stringValues();
+        String[] entries = left ? Consumables.stringValues() : Nominals.stringValues();
         for (int i = 0; i < entries.length; i++) {
             String entry = entries[i];
             int value = left ? controlPanel.getConsumableAmount(entry) : controlPanel.getCoinAmount(entry);

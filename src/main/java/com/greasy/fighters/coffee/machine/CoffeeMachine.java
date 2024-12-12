@@ -3,9 +3,9 @@ package com.greasy.fighters.coffee.machine;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.greasy.fighters.Enums;
 import com.greasy.fighters.Main;
 import com.greasy.fighters.data.handler.DataHandler;
+import com.greasy.fighters.enums.Nominals;
 import com.greasy.fighters.statistic.Statistics;
 
 public class CoffeeMachine {
@@ -62,7 +62,7 @@ public class CoffeeMachine {
     }
 
     // Добавяне на пари
-    public void insertMoney(Enums.Nominals nominal) {
+    public void insertMoney(Nominals nominal) {
         insertedMoney += nominal.toInt();
         insertedCoins.put(nominal.toString(), insertedCoins.getOrDefault(nominal.toString(), 0) + 1);
     }
@@ -114,7 +114,7 @@ public class CoffeeMachine {
 
     private HashMap<String, Integer> getChangeHashMap(int amount) {
         HashMap<String, Integer> coins = new HashMap<>();
-        for (Enums.Nominals nominal : Enums.Nominals.values()) { // Обхожда се масива, съдържащ номиналите на монетите. За всяка итерация i e един номинал
+        for (Nominals nominal : Nominals.values()) { // Обхожда се масива, съдържащ номиналите на монетите. За всяка итерация i e един номинал
             if (controlPanel.getCoins().get(nominal.toString()) != 0) { // Проверка дали кафе машината има налични монети от този номинал. Ако няма, итерацията продължава със следващия номинал.
                 int coinAmount = amount / nominal.toInt(); // Изчисляване на броя монети от този номинал, които са нужни
                 if (coinAmount != 0) { // Проверка дали са нужни 0 монети. Ако не, към резултатния низ се конкатенира номинала монети и броя

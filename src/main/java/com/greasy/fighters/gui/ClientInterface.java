@@ -6,8 +6,8 @@ import java.util.stream.Stream;
 
 import javax.swing.*;
 
-import com.greasy.fighters.Enums;
 import com.greasy.fighters.coffee.machine.CoffeeMachine;
+import com.greasy.fighters.enums.Nominals;
 
 public class ClientInterface {
     private final CoffeeMachine coffeeMachine;
@@ -48,7 +48,7 @@ public class ClientInterface {
 
     private String[][] createButtonLabels() {
         return new String[][]{
-                Stream.concat(Arrays.stream(Enums.Nominals.stringValues()), Stream.of("Drop")).toArray(String[]::new),
+                Stream.concat(Arrays.stream(Nominals.stringValues()), Stream.of("Drop")).toArray(String[]::new),
                 new String[]{"-", "+"},
                 IntStream.range(0, coffeeMachine.getCoffeeNames().length)
                         .mapToObj(i -> coffeeMachine.getCoffees().get(i).getName() + " - " + coffeeMachine.getCoffees().get(i).priceString() + coffeeMachine.getControlPanel().getMoneySymbol())
@@ -116,7 +116,7 @@ public class ClientInterface {
             coffeeMachine.returnMoney();
             labels[0].setText("Insert coins (currently 0):");
         } else {
-            coffeeMachine.insertMoney(Enums.Nominals.values()[buttonIndex]);
+            coffeeMachine.insertMoney(Nominals.values()[buttonIndex]);
             labels[0].setText(String.format("Insert coins (currently %d):", coffeeMachine.getInsertedMoney()));
         }
     }

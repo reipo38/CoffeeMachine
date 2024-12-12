@@ -3,8 +3,8 @@ package com.greasy.fighters.coffee.machine;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.greasy.fighters.Enums;
 import com.greasy.fighters.data.handler.DataHandler;
+import com.greasy.fighters.enums.Consumables;
 
 public class ControlPanel {
     /***
@@ -53,17 +53,17 @@ public class ControlPanel {
 
     // Метод за проверка дали всички нужни съставки за приготвянето на кафе са налични
     public boolean ingredientsAvailable(Coffee coffee) {
-        return isEnoughConsumable(Enums.Consumables.COFFEE.toString(), coffee.getCoffeeNeeded()) &&
-                (!coffee.hasMilk() || isEnoughConsumable(Enums.Consumables.MILK.toString(), milkNeeded)) &&
-                isEnoughConsumable(Enums.Consumables.WATER.toString(), coffee.getWaterNeeded()) &&
-                isEnoughConsumable(Enums.Consumables.SUGAR.toString(), coffeeMachine.getSugarSelected());
+        return isEnoughConsumable(Consumables.COFFEE.toString(), coffee.getCoffeeNeeded()) &&
+                (!coffee.hasMilk() || isEnoughConsumable(Consumables.MILK.toString(), milkNeeded)) &&
+                isEnoughConsumable(Consumables.WATER.toString(), coffee.getWaterNeeded()) &&
+                isEnoughConsumable(Consumables.SUGAR.toString(), coffeeMachine.getSugarSelected());
     }
 
     // Примерен метод, където всички промени се обработват в една точка
     public void updateInternalValues(Coffee coffee, HashMap<String, Integer> coins) {
         // Обновяваме съставките въз основа на кафето и захарта
-        for (Enums.Consumables consumable : Enums.Consumables.values()) {
-            if (consumable == Enums.Consumables.MONEY) {
+        for (Consumables consumable : Consumables.values()) {
+            if (consumable == Consumables.MONEY) {
                 continue;  // Пропускаме парите тук
             }
             updateConsumable(consumable, coffee);
@@ -92,11 +92,11 @@ public class ControlPanel {
                 .mapToInt(entry -> parseCoinAmount(entry.getKey()) * entry.getValue())
                 .sum();
 
-        consumables.put(Enums.Consumables.MONEY.toString(), money);
+        consumables.put(Consumables.MONEY.toString(), money);
         DataHandler.saveConsumables(consumables);
     }
 
-    private void updateConsumable(Enums.Consumables consumable, Coffee coffee) {
+    private void updateConsumable(Consumables consumable, Coffee coffee) {
         int amountToDeduct = switch (consumable) {
             case COFFEE -> coffee.getCoffeeNeeded();
             case MILK -> coffee.hasMilk() ? milkNeeded : 0;
