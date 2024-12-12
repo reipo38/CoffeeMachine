@@ -7,7 +7,7 @@ import com.greasy.fighters.gui.VisualManager;
 import com.greasy.fighters.statistic.Statistics;
 
 public class Main {
-    public static final CoffeeMachine coffeeMachine = new CoffeeMachine(DataHandler.loadCoffeeTypes());
+    public static final CoffeeMachine coffeeMachine = new CoffeeMachine();
     private static final ControlPanel controlPanel = coffeeMachine.getControlPanel();
     public static final VisualManager visualManager = new VisualManager(coffeeMachine);
 
@@ -20,8 +20,6 @@ public class Main {
         // controlPanel.addNewCoffee("Coffee with milk", 120, 50, true, 100);
         // controlPanel.addNewCoffee("Machiatto", 140, 40, true, 100);
         // controlPanel.addNewCoffee("Cappuccino", 140, 40, true, 100);
-
-        Statistics.loadDailyStatistic();
 
         // controlPanel.addCoffee(1000);
         // controlPanel.addSugar(1000);

@@ -178,7 +178,7 @@ public class AdminInterface {
         /*
          * Може би премахни "Statistics:" етикета, защото диаграмата вече има заглавие
          */
-        HashMap<String, Integer> coffeeData = DataHandler.loadStatistic(); // TODO: Проверка на статистиките за друг ден
+        HashMap<String, Integer> coffeeData = controlPanel.getDataHandler().loadStatistic(); // TODO: Проверка на статистиките за друг ден
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (Map.Entry<String, Integer> entry : coffeeData.entrySet()) {

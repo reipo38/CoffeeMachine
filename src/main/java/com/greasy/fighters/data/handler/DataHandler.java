@@ -8,26 +8,34 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.greasy.fighters.calendar.Calendar;
 import com.greasy.fighters.coffee.machine.Coffee;
-import com.greasy.fighters.statistic.Statistics;
+import com.greasy.fighters.coffee.machine.ControlPanel;
 
 public class DataHandler {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final Path consumablesPath = Paths.get("data/consumables.json");
-    private static final Path coffeesPath = Paths.get("data/coffees.json");
-    private static final Path passwordPath = Paths.get("data/password.txt");
-    private static final Path moneyPath = Paths.get("data/money.json");
+    private Path consumablesPath = Paths.get("data/consumables.json");
+    private Path coffeesPath = Paths.get("data/coffees.json");
+    private Path passwordPath = Paths.get("data/password.txt");
+    private Path moneyPath = Paths.get("data/money.json");
 
-    public static void saveStatistics() {
-        Path statisticsPath = Paths.get("data/statistics/" + getDateMonthYear() + ".json");
-        HashMap<String, Integer> statistics = Statistics.getDailyStatistic();
+    private ObjectMapper objectMapper;
+    private ControlPanel controlPanel;
+    private Calendar calendar;
+
+    public DataHandler(ControlPanel controlPanel) {
+        objectMapper = new ObjectMapper();
+        this.controlPanel = controlPanel;
+        this.calendar = new Calendar();
+    }
+
+    public void saveStatistics() {
+        Path statisticsPath = Paths.get("data/statistics/" + calendar.getDateMonthYear() + ".json");
+        HashMap<String, Integer> statistics = controlPanel.getStatistics().getDailyStatistic();
         try {
             objectMapper.writeValue(new File(statisticsPath.toString()), statistics);
         } catch (IOException e) {
@@ -35,28 +43,19 @@ public class DataHandler {
         }
     }
 
-    public static HashMap<String, Integer> loadConsumables() {
+    public HashMap<String, Integer> loadConsumables() {
         return loadHashMapStringInteger(consumablesPath);
     }
 
-    public static HashMap<String, Integer> loadCoins() {
+    public HashMap<String, Integer> loadCoins() {
         return loadHashMapStringInteger(moneyPath);
     }
 
-    public static void saveConsumables(HashMap<String, Integer> consumables) {
+    public void saveConsumables(HashMap<String, Integer> consumables) {
         saveToJson(consumablesPath, consumables);
     }
 
-    public static void saveCoins(HashMap<String, Integer> coins) {
-        saveToJson(moneyPath, coins);
-    }
-
-    private static String getDateMonthYear() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.getMonthValue() + "." + now.getDayOfMonth() + "." + now.getYear();
-    }
-
-    public static ArrayList<Coffee> loadCoffeeTypes() {
+    public ArrayList<Coffee> loadCoffees() {
         // File coffeeDirectory = new File("data/coffee/");
         // File[] coffeeFiles = coffeeDirectory.listFiles();
 
@@ -72,11 +71,11 @@ public class DataHandler {
         return coffeeTypes;
     }
 
-    public static void saveCoffees(ArrayList<Coffee> coffees) {
+    public void saveCoffees(ArrayList<Coffee> coffees) {
         saveToJson(coffeesPath, coffees);
     }
 
-    private static void savePassword(String password) { // * ненужен метод, ама го добавих, ако евентуално добавим смяна на парола
+    private void savePassword(String password) { // * ненужен метод, ама го добавих, ако евентуално добавим смяна на парола
         try {
             FileWriter fileWriter = new FileWriter(passwordPath.toString());
             fileWriter.write(password);
@@ -86,7 +85,7 @@ public class DataHandler {
         }
     }
 
-    public static String getPassword() {
+    public String getPassword() {
         File passwordFile = new File(passwordPath.toString());
         String password;
 
@@ -100,24 +99,24 @@ public class DataHandler {
         return password;
     }
 
-    public static HashMap<String, Integer> loadStatistic() {
-        String filename = getDateMonthYear();
+    public HashMap<String, Integer> loadStatistic() {
+        String filename = calendar.getDateMonthYear();
         return loadStatisticByFilename(filename);
     }
 
     // ! не знам как по друг начин да се направят тези два метода
 
-    public static HashMap<String, Integer> loadStatistic(String filename) {
+    public HashMap<String, Integer> loadStatistic(String filename) {
         return loadStatisticByFilename(filename);
     }
 
     // * ChatGPT ми каза това
-    private static HashMap<String, Integer> loadStatisticByFilename(String filename) {
+    private HashMap<String, Integer> loadStatisticByFilename(String filename) {
         Path filePath = Paths.get("data/statistics", filename + ".json");
         return loadHashMapStringInteger(filePath);
     }
 
-    public static HashMap<String, Integer> loadHashMapStringInteger(Path filePath) {
+    public HashMap<String, Integer> loadHashMapStringInteger(Path filePath) {
         String filePathString = filePath.toString();
 
         try {
@@ -126,7 +125,7 @@ public class DataHandler {
                 new TypeReference<HashMap<String, Integer>>() {}
             );
 
-            //System.out.println(hashMap.toString());
+            // System.out.println(hashMap.toString());
 
             return hashMap;
         } catch (FileNotFoundException e) {
@@ -153,7 +152,7 @@ public class DataHandler {
     }
     */
 
-    private static void saveToJson(Path path, Object data) {
+    private void saveToJson(Path path, Object data) {
         File file = new File(path.toString());
 
         try {
@@ -161,5 +160,9 @@ public class DataHandler {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void saveCoins(HashMap<String, Integer> coins) {
+        saveToJson(moneyPath, coins);
     }
 }
