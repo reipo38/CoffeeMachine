@@ -5,15 +5,18 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.swing.JOptionPane;
 
-import com.greasy.fighters.data.handler.DataHandler;
+import com.greasy.fighters.coffee.machine.ControlPanel;
 
 public class PasswordPopup {
     String password;
     String enteredPassword;
     MessageDigest md;
+    ControlPanel controlPanel;
 
-    public PasswordPopup() {
-        password = DataHandler.getPassword();
+    public PasswordPopup(ControlPanel controlPanel) {
+        this.controlPanel = controlPanel;
+
+        password = controlPanel.getDataHandler().getPassword();
 
         try {
             md = MessageDigest.getInstance("SHA-256"); // алгоритъм за хеширане SHA-256

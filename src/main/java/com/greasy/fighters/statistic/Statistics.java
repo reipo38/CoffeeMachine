@@ -2,7 +2,7 @@ package com.greasy.fighters.statistic;
 import java.util.HashMap;
 
 import com.greasy.fighters.coffee.machine.Coffee;
-import com.greasy.fighters.data.handler.DataHandler;
+import com.greasy.fighters.coffee.machine.ControlPanel;
 
 
 public class Statistics {
@@ -10,7 +10,8 @@ public class Statistics {
      * По-добре класът да е статичен, защото не е нужно да има обект, неговите методи са помощни
      */
 
-    private static HashMap<String, Integer> dailyStatistic = new HashMap<>();
+    private HashMap<String, Integer> dailyStatistic = new HashMap<>();
+    private ControlPanel controlPanel;
 
     // * Всяко кафе ще се добавя, ако е поръчано
     // * Така се пълни с излишни работи
@@ -20,16 +21,22 @@ public class Statistics {
     //     }
     // }
 
-    public static void loadDailyStatistic() {
-        dailyStatistic = DataHandler.loadStatistic();
+    public Statistics(ControlPanel controlPanel) {
+        this.controlPanel = controlPanel;
+        
+        loadDailyStatistic();
     }
 
-    public static void addCoffeeToDailyStatistic(Coffee coffee) {
+    public void loadDailyStatistic() {
+        dailyStatistic = controlPanel.getDataHandler().loadStatistic();
+    }
+
+    public void addCoffeeToDailyStatistic(Coffee coffee) {
         dailyStatistic.put(coffee.getName(), dailyStatistic.getOrDefault(coffee.getName(), 0) + 1);
-        DataHandler.saveStatistics();
+        controlPanel.getDataHandler().saveStatistics();
     }
 
-    public static HashMap<String, Integer> getDailyStatistic() {
+    public HashMap<String, Integer> getDailyStatistic() {
         return dailyStatistic;
     }
 }

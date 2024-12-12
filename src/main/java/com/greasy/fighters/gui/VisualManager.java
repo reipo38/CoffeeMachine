@@ -34,7 +34,7 @@ public class VisualManager {
         clientInterface = new ClientInterface(panel, coffeeMachine, WINDOW_WIDTH, ELEMENT_HEIGHT, ELEMENT_X_OFFSET);
         regimeButton = createRegimeButton();
         adminInterface = new AdminInterface(panel, coffeeMachine.getControlPanel(), WINDOW_WIDTH, ELEMENT_HEIGHT, ELEMENT_X_OFFSET, regimeButton);
-        passwordPopup = new PasswordPopup();
+        passwordPopup = new PasswordPopup(coffeeMachine.getControlPanel());
     }
 
     public void loadGUI() {

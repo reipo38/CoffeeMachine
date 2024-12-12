@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.greasy.fighters.data.handler.DataHandler;
 import com.greasy.fighters.enums.Consumables;
+import com.greasy.fighters.statistic.Statistics;
 
 public class ControlPanel {
     /***
@@ -22,6 +23,9 @@ public class ControlPanel {
 
     private final CoffeeMachine coffeeMachine; // Инстанция на кафемашината, която управляваме
 
+    private DataHandler dataHandler;
+    private Statistics statistics;
+
     private final HashMap<String, Integer> consumables; // Речник със съставките в кафемашината
 
     // Речник, който пази количеството монети от всеки номинал. Логиката е временна. Ще бъде променена скоро
@@ -35,8 +39,12 @@ public class ControlPanel {
     // Конструктор на ControlPanel, инициализиращ кафемашината и зареждащ съставките
     public ControlPanel(CoffeeMachine coffeeMachine) {
         this.coffeeMachine = coffeeMachine;
-        this.consumables = DataHandler.loadConsumables(); // Зареждаме съставките от външно хранилище (например JSON файл)
-        this.coins = DataHandler.loadCoins();
+        this.dataHandler = new DataHandler(this);
+        this.statistics = new Statistics(this);
+        this.consumables = this.dataHandler.loadConsumables(); // Зареждаме съставките от външно хранилище (например JSON файл)
+        this.coins = this.dataHandler.loadCoins();
+
+        this.coffeeMachine.setCoffees(this.dataHandler.loadCoffees());
         updateTotalMoneyAmount();
     }
 
@@ -93,7 +101,7 @@ public class ControlPanel {
                 .sum();
 
         consumables.put(Consumables.MONEY.toString(), money);
-        DataHandler.saveConsumables(consumables);
+        dataHandler.saveConsumables(consumables);
     }
 
     private void updateConsumable(Consumables consumable, Coffee coffee) {
@@ -130,8 +138,8 @@ public class ControlPanel {
         } else {
             consumables.put(property, consumables.get(property) + amount);
         }
-        DataHandler.saveConsumables(consumables);
-        DataHandler.saveCoins(coins);
+        dataHandler.saveConsumables(consumables);
+        dataHandler.saveCoins(coins);
     }
 
     // Метод за получаване на символа за парите
@@ -182,5 +190,13 @@ public class ControlPanel {
     // Метод за получаване на имената на наличните кафета
     public String[] getCoffeeNames() {
         return coffeeMachine.getCoffeeNames();
+    }
+
+    public DataHandler getDataHandler() {
+        return dataHandler;
+    }
+
+    public Statistics getStatistics() {
+        return statistics;
     }
 }

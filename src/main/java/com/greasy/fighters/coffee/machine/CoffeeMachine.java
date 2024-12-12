@@ -22,7 +22,7 @@ public class CoffeeMachine {
      * поле insertedMoney - съдържа парите вкарани в кафе машината до момента
      */
 
-    private final ArrayList<Coffee> coffees;
+    private ArrayList<Coffee> coffees;
     private final ControlPanel controlPanel = new ControlPanel(this);
 
     private int sugarSelected;
@@ -30,6 +30,9 @@ public class CoffeeMachine {
     private final HashMap<String, Integer> insertedCoins;
     private int insertedMoney;
 
+    public CoffeeMachine() {
+        insertedCoins = new HashMap<>();
+    }
 
     // Конструктор. Приема като параметър списъка с наличните кафета.
     public CoffeeMachine(ArrayList<Coffee> coffees) {
@@ -40,13 +43,13 @@ public class CoffeeMachine {
     // Метод за добавяне на ново кафе
     public void addNewCoffee(Coffee coffee) {
         coffees.add(coffee);
-        DataHandler.saveCoffees(coffees);
+        controlPanel.getDataHandler().saveCoffees(coffees);
     }
 
     // Метод за изтриване на кафе
     public void deleteCoffee(Coffee coffee) {
         coffees.remove(coffee);
-        DataHandler.saveCoffees(coffees);
+        controlPanel.getDataHandler().saveCoffees(coffees);
     }
 
     /*
@@ -78,7 +81,7 @@ public class CoffeeMachine {
         if (controlPanel.ingredientsAvailable(coffee)) { // Проверка дали нужните съставки са налични
             if (hasSufficientMoney(coffee)) { // Проверка дали са вкарани достатъчно пари
                 prepareAndChargeForCoffee(coffee); // Кафето се приготва
-                Statistics.addCoffeeToDailyStatistic(coffee); // Покупката се отбелязва в статистиките
+                controlPanel.getStatistics().addCoffeeToDailyStatistic(coffee); // Покупката се отбелязва в статистиките
             } else { // Ако парите не са достатъчно се изписва надпис.
                 Main.visualManager.setOutputText("Not enough money.");
             }
@@ -179,5 +182,9 @@ public class CoffeeMachine {
 
     public int getSugarSelected() {
         return sugarSelected;
+    }
+
+    public void setCoffees(ArrayList<Coffee> coffees) {
+        this.coffees = coffees;
     }
 }
