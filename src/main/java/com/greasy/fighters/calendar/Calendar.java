@@ -1,6 +1,6 @@
 package com.greasy.fighters.calendar;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Calendar {
@@ -9,25 +9,33 @@ public class Calendar {
 
     }
 
-    private String formatDate(LocalDateTime date) {
+    private String formatDate(LocalDate date) {
         return date.getMonthValue() + "." + date.getDayOfMonth() + "." + date.getYear();
     }
 
     public String getDateMonthYear() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
         return formatDate(now);
     }
 
-    private LocalDateTime stringToLocalDateTime(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime localDateTime = LocalDateTime.parse(date, formatter);
+    private LocalDate stringToLocalDate(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM.dd.yyyy");
+        LocalDate localDate = LocalDate.parse(date, formatter);
 
-        return localDateTime;
+        return localDate;
     }
 
+    public String calculateDate(String date, int daysToAdd) {
+        LocalDate localDate = stringToLocalDate(date);
+        LocalDate resultDate = localDate.plusDays(daysToAdd);
+        return formatDate(resultDate);
+    }
+    
     public String calculateTomorrow(String date) {
-        LocalDateTime localDateTime = stringToLocalDateTime(date);
-
-        return formatDate(localDateTime);
+        return calculateDate(date, 1);
+    }
+    
+    public String calculateYesterday(String date) {
+        return calculateDate(date, -1);
     }
 }
