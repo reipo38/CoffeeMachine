@@ -12,3 +12,6 @@ Java OOP project simulating a fully functional coffee machine, allowing users to
 * <strike>Statistics database</strike>
 * <strike>Irish Coffee plsss</strike>
 * KYS (Svetli)
+
+## Bugs
+* Consumables and coins can go negative

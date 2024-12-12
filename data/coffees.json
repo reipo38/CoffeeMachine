@@ -1,1 +1,31 @@
-[{"name":"Coffee","price":70,"coffeeNeeded":50,"waterNeeded":100},{"name":"Coffee Long","price":70,"coffeeNeeded":50,"waterNeeded":150},{"name":"Coffee Double","price":120,"coffeeNeeded":100,"waterNeeded":200},{"name":"Coffee with milk","price":120,"coffeeNeeded":50,"waterNeeded":100},{"name":"Machiatto","price":140,"coffeeNeeded":40,"waterNeeded":100},{"name":"Cappuccino","price":140,"coffeeNeeded":40,"waterNeeded":100}]
+[ {
+  "name" : "Coffee",
+  "price" : 70,
+  "coffeeNeeded" : 50,
+  "waterNeeded" : 100
+}, {
+  "name" : "Coffee Long",
+  "price" : 70,
+  "coffeeNeeded" : 50,
+  "waterNeeded" : 150
+}, {
+  "name" : "Coffee Double",
+  "price" : 120,
+  "coffeeNeeded" : 100,
+  "waterNeeded" : 200
+}, {
+  "name" : "Coffee with milk",
+  "price" : 120,
+  "coffeeNeeded" : 50,
+  "waterNeeded" : 100
+}, {
+  "name" : "Machiatto",
+  "price" : 140,
+  "coffeeNeeded" : 40,
+  "waterNeeded" : 100
+}, {
+  "name" : "Cappuccino",
+  "price" : 140,
+  "coffeeNeeded" : 40,
+  "waterNeeded" : 100
+} ]

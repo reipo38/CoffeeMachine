@@ -158,7 +158,7 @@ public class DataHandler {
         File file = new File(path.toString());
 
         try {
-            objectMapper.writeValue(file, data);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, data); // * за да се показва хубаво
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
