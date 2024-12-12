@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -34,7 +35,7 @@ public class DataHandler {
     }
 
     public void saveStatistics() {
-        Path statisticsPath = Paths.get("data/statistics/" + calendar.getDateMonthYear() + ".json");
+        Path statisticsPath = Paths.get("data/statistics/" + calendar.getCurrentDate() + ".json");
         HashMap<String, Integer> statistics = controlPanel.getStatistics().getDailyStatistic();
         try {
             objectMapper.writeValue(new File(statisticsPath.toString()), statistics);
@@ -100,13 +101,14 @@ public class DataHandler {
     }
 
     public HashMap<String, Integer> loadStatistic() {
-        String filename = calendar.getDateMonthYear();
+        String filename = calendar.getCurrentDate();
         return loadStatisticByFilename(filename);
     }
 
     // ! не знам как по друг начин да се направят тези два метода
 
-    public HashMap<String, Integer> loadStatistic(String filename) {
+    public HashMap<String, Integer> loadStatistic(LocalDate date) {
+        String filename = controlPanel.getCalendar().formatDate(date);
         return loadStatisticByFilename(filename);
     }
 

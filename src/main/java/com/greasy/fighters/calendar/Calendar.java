@@ -4,16 +4,25 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Calendar {
+    private LocalDate selectedDate;
     
     public Calendar() {
-
+        selectedDate = LocalDate.now();
     }
 
-    private String formatDate(LocalDate date) {
+    public String formatDate(LocalDate date) {
         return date.getMonthValue() + "." + date.getDayOfMonth() + "." + date.getYear();
     }
 
-    public String getDateMonthYear() {
+    public LocalDate getSelectedDate() {
+        return selectedDate;
+    }
+
+    public void setSelectedDate(LocalDate selectedDate) {
+        this.selectedDate = selectedDate;
+    }
+
+    public String getCurrentDate() {
         LocalDate now = LocalDate.now();
         return formatDate(now);
     }
@@ -25,17 +34,15 @@ public class Calendar {
         return localDate;
     }
 
-    public String calculateDate(String date, int daysToAdd) {
-        LocalDate localDate = stringToLocalDate(date);
-        LocalDate resultDate = localDate.plusDays(daysToAdd);
-        return formatDate(resultDate);
+    public LocalDate calculateDate(LocalDate date, int daysToAdd) {
+        return date.plusDays(daysToAdd);
     }
     
-    public String calculateTomorrow(String date) {
+    public LocalDate calculateTomorrow(LocalDate date) {
         return calculateDate(date, 1);
     }
     
-    public String calculateYesterday(String date) {
+    public LocalDate calculateYesterday(LocalDate date) {
         return calculateDate(date, -1);
     }
 }

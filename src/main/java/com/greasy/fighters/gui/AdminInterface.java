@@ -1,6 +1,7 @@
 package com.greasy.fighters.gui;
 
 import java.awt.Component;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,15 +12,15 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.greasy.fighters.enums.Consumables;
-import com.greasy.fighters.enums.Nominals;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import com.greasy.fighters.calendar.Calendar;
 import com.greasy.fighters.coffee.machine.ControlPanel;
-import com.greasy.fighters.data.handler.DataHandler;
+import com.greasy.fighters.enums.Consumables;
+import com.greasy.fighters.enums.Nominals;
 
 public class AdminInterface {
     private final ControlPanel controlPanel;
@@ -80,7 +81,7 @@ public class AdminInterface {
         for (int i = 0; i < componentTypePerRow.length; i++) {
             loadComponentsRow(i); // Зареждане на компонентите по редове
         }
-        loadDiagram(); // Зареждане на диаграмата
+        loadDiagram(controlPanel.getCalendar().getSelectedDate()); // Зареждане на диаграмата
     }
 
     // Зареждане на компонентите по редове
@@ -135,7 +136,16 @@ public class AdminInterface {
                         Integer.parseInt(((PlaceholderJTextField) components[3][1]).getText()),     // количество кафе
                         Boolean.parseBoolean(((PlaceholderJTextField) components[3][2]).getText()), // съдържа ли мляко
                         Integer.parseInt(((PlaceholderJTextField) components[3][3]).getText()));    // необходимо количество вода
-                //case 4 -> //TODO: Логика за смяна на статистиките (id=0 - назад; id=1 - напред)
+                case 4 -> {
+                    Calendar calendar = controlPanel.getCalendar();
+                    LocalDate selectedDate = calendar.getSelectedDate();
+
+                    LocalDate newDate = (id == 0) // * проверява кой бутон е натиснат
+                        ? calendar.calculateYesterday(selectedDate) //* ако е вярно
+                        : calendar.calculateTomorrow(selectedDate); // * ако не е вярно
+
+                    calendar.setSelectedDate(newDate);
+                }
             }
             reloadPanel(); // Презареждане на панела
         } catch (NumberFormatException ignored){}
@@ -174,11 +184,12 @@ public class AdminInterface {
     }
 
     // Зареждане и показване на диаграмата за статистиките
-    private void loadDiagram() {
+    private void loadDiagram(LocalDate date) {
         /*
          * Може би премахни "Statistics:" етикета, защото диаграмата вече има заглавие
          */
-        HashMap<String, Integer> coffeeData = controlPanel.getDataHandler().loadStatistic(); // TODO: Проверка на статистиките за друг ден
+
+        HashMap<String, Integer> coffeeData = controlPanel.getDataHandler().loadStatistic(date); // TODO: Проверка на статистиките за друг ден
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (Map.Entry<String, Integer> entry : coffeeData.entrySet()) {
@@ -189,7 +200,7 @@ public class AdminInterface {
         }
 
         JFreeChart chart = ChartFactory.createBarChart(
-                "Ordered Coffees Today", // Заглавие на диаграмата
+                controlPanel.getCalendar().formatDate(date), // Заглавие на диаграмата
                 "",
                 "Ordered",
                 dataset
