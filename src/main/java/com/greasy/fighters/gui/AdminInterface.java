@@ -18,7 +18,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import com.greasy.fighters.calendar.Calendar;
 import com.greasy.fighters.coffee.machine.ControlPanel;
 import com.greasy.fighters.enums.Consumables;
 import com.greasy.fighters.enums.Nominals;
@@ -87,7 +86,7 @@ public class AdminInterface {
 
     // Зареждане на компонентите по редове
     private void loadComponentsRow(int i) {
-        int yPosition = elementHeight * (4 + i * 2);
+        int yPosition = elementHeight * (4 + i * 2) - (i != 3 ? 0 : elementHeight/2);
         int width = (windowWidth - elementXOffset) / componentTypePerRow[i].length;
         int[] componentTypes = componentTypePerRow[i];
         for (int id = 0; id < componentTypes.length; id++) {
@@ -125,31 +124,24 @@ public class AdminInterface {
     }
 
     // Обработка на действието при натискане на бутон
-    @SuppressWarnings("unchecked")
     private void handleButtonAction(int i, int id) {
         try {
             switch (i) {
-                case 0 -> controlPanel.changePropertiesValue( (String) ((JComboBox<String>) components[0][0]).getSelectedItem(), Integer.parseInt(((PlaceholderJTextField) components[0][1]).getText()) * (id == 2 ? 1 : -1));
-                case 1 -> controlPanel.deleteCoffeeByName( (String) ((JComboBox<String>) components[1][0]).getSelectedItem());
+                case 0 ->
+                        controlPanel.changePropertiesValue((String) ((JComboBox<String>) components[0][0]).getSelectedItem(), Integer.parseInt(((PlaceholderJTextField) components[0][1]).getText()) * (id == 2 ? 1 : -1));
+                case 1 ->
+                        controlPanel.deleteCoffeeByName((String) ((JComboBox<String>) components[1][0]).getSelectedItem());
                 case 2 -> controlPanel.addNewCoffee(
                         ((PlaceholderJTextField) components[2][0]).getText(),                       // име на кафето
                         Integer.parseInt(((PlaceholderJTextField) components[3][0]).getText()),     // цена на кафето
                         Integer.parseInt(((PlaceholderJTextField) components[3][1]).getText()),     // количество кафе
                         Boolean.parseBoolean(((PlaceholderJTextField) components[3][2]).getText()), // съдържа ли мляко
                         Integer.parseInt(((PlaceholderJTextField) components[3][3]).getText()));    // необходимо количество вода
-                case 4 -> {
-                    Calendar calendar = controlPanel.getCalendar();
-                    LocalDate selectedDate = calendar.getSelectedDate();
-
-                    LocalDate newDate = (id == 0) // * проверява кой бутон е натиснат
-                        ? calendar.calculateYesterday(selectedDate) //* ако е вярно
-                        : calendar.calculateTomorrow(selectedDate); // * ако не е вярно
-
-                    calendar.setSelectedDate(newDate);
-                }
+                case 4 -> controlPanel.changeDateForStatistics(id == 0);
             }
             reloadPanel(); // Презареждане на панела
-        } catch (NumberFormatException ignored){}
+        } catch (NumberFormatException ignored) {
+        }
     }
 
     // Презареждане на панела
@@ -166,7 +158,7 @@ public class AdminInterface {
         for (int i = 0; i < entries.length; i++) {
             String entry = entries[i];
             int value = left ? controlPanel.getConsumableAmount(entry) : controlPanel.getCoinAmount(entry);
-            String strValue = left && i == 0 ? value/100 + "." + value%100 : String.valueOf(value);
+            String strValue = left && i == 0 ? value / 100 + "." + value % 100 : String.valueOf(value);
             JLabel label = new JLabel(String.format("%s available: %s", entry, strValue));
             label.setBounds(left ? elementXOffset : windowWidth / 2, elementHeight / 2 + elementHeight / 2 * i, windowWidth, elementHeight);
             panel.add(label);
@@ -186,26 +178,12 @@ public class AdminInterface {
 
     // Зареждане и показване на диаграмата за статистиките
     private void loadDiagram(LocalDate date) {
-        /*
-         * Може би премахни "Statistics:" етикета, защото диаграмата вече има заглавие
-         */
-
-        HashMap<String, Integer> coffeeData = controlPanel.getDataHandler().loadStatistic(date); // TODO: Проверка на статистиките за друг ден
-
+        HashMap<String, Integer> coffeeData = controlPanel.getDataHandler().loadStatistic(date);
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (Map.Entry<String, Integer> entry : coffeeData.entrySet()) {
-            String category = entry.getKey();
-            Integer value = entry.getValue();
-
-            dataset.addValue(value, "Ordered", category); // Добавяне на стойностите в набора за диаграмата
+            dataset.addValue(entry.getValue(), "Ordered", entry.getKey()); // Добавяне на стойностите в набора за диаграмата
         }
-
-        JFreeChart chart = ChartFactory.createBarChart(
-                controlPanel.getCalendar().formatDate(date), // Заглавие на диаграмата
-                "",
-                "Ordered",
-                dataset
-        );
+        JFreeChart chart = ChartFactory.createBarChart(controlPanel.getCalendar().formatDate(date), "", "Ordered", dataset);
         chart.setBackgroundPaint(new Color(238, 238, 238)); // * за да се слива с фона
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setBounds(elementXOffset, elementHeight * 13, windowWidth - elementXOffset * 2, elementHeight * 5);

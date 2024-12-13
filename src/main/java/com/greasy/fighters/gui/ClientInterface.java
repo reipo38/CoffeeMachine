@@ -16,7 +16,6 @@ public class ClientInterface {
     private final int elementHeight;
     private final int elementXOffset;
 
-    private JLabel outputLabel;
     private JTextArea outputTextArea;
 
     private String[][] buttonLabels;
@@ -132,7 +131,7 @@ public class ClientInterface {
     }
 
     private void loadOutputArea() {
-        outputLabel = createLabel();
+        JLabel outputLabel = createLabel();
         panel.add(outputLabel);
         outputTextArea = createTextArea();
         panel.add(outputTextArea);

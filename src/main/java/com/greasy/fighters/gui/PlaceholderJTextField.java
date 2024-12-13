@@ -1,4 +1,5 @@
 package com.greasy.fighters.gui;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;

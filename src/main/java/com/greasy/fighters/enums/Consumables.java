@@ -10,6 +10,7 @@ public enum Consumables {
     WATER("Water");
 
     private final String strValue;
+
     Consumables(String strValue) {
         this.strValue = strValue;
     }

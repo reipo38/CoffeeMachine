@@ -19,14 +19,14 @@ import com.greasy.fighters.coffee.machine.Coffee;
 import com.greasy.fighters.coffee.machine.ControlPanel;
 
 public class DataHandler {
-    private Path consumablesPath = Paths.get("data/consumables.json");
-    private Path coffeesPath = Paths.get("data/coffees.json");
-    private Path passwordPath = Paths.get("data/password.txt");
-    private Path moneyPath = Paths.get("data/money.json");
+    private final Path consumablesPath = Paths.get("data/consumables.json");
+    private final Path coffeesPath = Paths.get("data/coffees.json");
+    private final Path passwordPath = Paths.get("data/password.txt");
+    private final Path moneyPath = Paths.get("data/money.json");
 
-    private ObjectMapper objectMapper;
-    private ControlPanel controlPanel;
-    private Calendar calendar;
+    private final ObjectMapper objectMapper;
+    private final ControlPanel controlPanel;
+    private final Calendar calendar;
 
     public DataHandler(ControlPanel controlPanel) {
         objectMapper = new ObjectMapper();
@@ -57,18 +57,13 @@ public class DataHandler {
     }
 
     public ArrayList<Coffee> loadCoffees() {
-        // File coffeeDirectory = new File("data/coffee/");
-        // File[] coffeeFiles = coffeeDirectory.listFiles();
-
         ArrayList<Coffee> coffeeTypes;
-
         try {
             coffeeTypes = objectMapper.readValue(new File(coffeesPath.toString()), new TypeReference<>() {
             });
-        } catch (IOException e ) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         return coffeeTypes;
     }
 
@@ -120,39 +115,19 @@ public class DataHandler {
 
     public HashMap<String, Integer> loadHashMapStringInteger(Path filePath) {
         String filePathString = filePath.toString();
-
         try {
-            HashMap<String, Integer> hashMap = objectMapper.readValue(
-                new File(filePathString), 
-                new TypeReference<HashMap<String, Integer>>() {}
+            return objectMapper.readValue(
+                    new File(filePathString),
+                    new TypeReference<>() {
+                    }
             );
-
-            // System.out.println(hashMap.toString());
-
-            return hashMap;
         } catch (FileNotFoundException e) {
             System.out.println("File not found: " + filePathString);
-            return new HashMap<String, Integer>();
+            return new HashMap<>();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-    /*
-    public static HashMap<String, Integer> loadMoney() {
-        HashMap<String, Integer> originalHashMap = loadHashMapStringInteger(moneyPath); // * JSON е тъп и не може да се използва нещо различно от низ като ключ
-
-        HashMap<Integer, Integer> moneyHashMap = new HashMap<>();
-
-        for (Map.Entry<String, Integer> entry : originalHashMap.entrySet()) {
-            /*
-             * може би трябва да се премести в друг метод
-            Integer newKey = entry.getKey().length();
-            moneyHashMap.put(newKey, entry.getValue());
-        }
-
-        return moneyHashMap;
-    }
-    */
 
     private void saveToJson(Path path, Object data) {
         File file = new File(path.toString());

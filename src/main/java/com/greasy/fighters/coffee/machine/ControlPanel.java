@@ -23,18 +23,18 @@ public class ControlPanel {
     private final String moneySymbol = "bgn"; // Символ за парите (може да бъде променен)
 
     private final CoffeeMachine coffeeMachine; // Инстанция на кафемашината, която управляваме
-    private Statistics statistics;
-    private DataHandler dataHandler;
-    private Calendar calendar;
+    private final Statistics statistics;
+    private final DataHandler dataHandler;
+    private final Calendar calendar;
 
     private final HashMap<String, Integer> consumables; // Речник със съставките в кафемашината
 
-    // Речник, който пази количеството монети от всеки номинал. Логиката е временна. Ще бъде променена скоро
+    // Речник, който пази количеството монети от всеки номинал.
     private final HashMap<String, Integer> coins;
 
     private int milkNeeded; // Количеството мляко, което е нужно за всяко кафе с мляко
 
-    private int sugarChangeBy; // Количеството захар, с което се променя избора за захар
+    private int sugarChangeBy; // Количеството захар, с което се променя избраната захар
     private int sugarMax; // Максималното количество захар, което може да бъде избрано
 
     // Конструктор на ControlPanel, инициализиращ кафемашината и зареждащ съставките
@@ -87,7 +87,7 @@ public class ControlPanel {
     private boolean isEnoughConsumable(String consumableKey, int amountNeeded) {
         return consumables.getOrDefault(consumableKey, 0) >= amountNeeded;
     }
-
+/*
     // Метод за промяна на количеството монети и актуализиране на парите в една централизирана точка
     private void changeCoinsAmount(HashMap<String, Integer> coins, boolean add) {
         for (Map.Entry<String, Integer> entry : coins.entrySet()) {
@@ -103,9 +103,46 @@ public class ControlPanel {
         int money = coins.entrySet().stream()
                 .mapToInt(entry -> parseCoinAmount(entry.getKey()) * entry.getValue())
                 .sum();
-
         consumables.put(Consumables.MONEY.toString(), money);
         dataHandler.saveConsumables(consumables);
+    }
+    */
+
+
+    // Метод за промяна на стойността на съставка
+    public void changePropertiesValue(String property, int amount) {
+        if (property.matches("-?\\d+(\\.\\d+)?")) {
+            coins.put(property, coins.get(property) + amount);
+            dataHandler.saveCoins(coins);
+            updateTotalMoneyAmount();
+        } else {
+            consumables.put(property, consumables.get(property) + amount);
+            dataHandler.saveConsumables(consumables);
+        }
+    }
+
+    private void updateTotalMoneyAmount() {
+        int totalMoney = coins.entrySet().stream()
+                .mapToInt(entry -> parseCoinAmount(entry.getKey()) * entry.getValue())
+                .sum();
+        consumables.put(Consumables.MONEY.toString(), totalMoney);
+        dataHandler.saveConsumables(consumables);
+    }
+
+    private void changeCoinsAmount(HashMap<String, Integer> coins, boolean add) {
+        for (Map.Entry<String, Integer> entry : coins.entrySet()) {
+            int newAmount = this.coins.getOrDefault(entry.getKey(), 0) + entry.getValue() * (add ? 1 : -1);
+            this.coins.put(entry.getKey(), newAmount);
+        }
+        updateTotalMoneyAmount();
+    }
+
+    private int parseCoinAmount(String coin) {
+        if (coin.length() > 1) {
+            return Integer.parseInt(coin.substring(2));
+        } else {
+            return Integer.parseInt(coin) + 100;
+        }
     }
 
     private void updateConsumable(Consumables consumable, Coffee coffee) {
@@ -113,7 +150,7 @@ public class ControlPanel {
             case COFFEE -> coffee.getCoffeeNeeded();
             case MILK -> coffee.hasMilk() ? milkNeeded : 0;
             case WATER -> coffee.getWaterNeeded();
-            case SUGAR ->  coffeeMachine.getSugarSelected();
+            case SUGAR -> coffeeMachine.getSugarSelected();
             default -> 0;
         };
 
@@ -123,27 +160,6 @@ public class ControlPanel {
     // Метод за актуализиране на количествата монети
     public void dropCoins(HashMap<String, Integer> coins) {
         changeCoinsAmount(coins, false);
-    }
-
-    // Метод за извличане на стойността на монетата
-    private int parseCoinAmount(String coin) {
-        if (coin.length() > 1) {
-            return Integer.parseInt(coin.substring(2));
-        } else {
-            return Integer.parseInt(coin) + 100;
-        }
-    }
-
-    // Метод за промяна на стойността на съставка
-    public void changePropertiesValue(String property, int amount) {  //TODO TOQ METOD TUKA E KENSUR AMA TRQ PYRVO TOQ HASHMAP DA SE NAPRAVI S ENUM KLYUCHOVE
-        if (property.matches("-?\\d+(\\.\\d+)?")) {
-            coins.put(property, coins.get(property) + amount);
-            updateTotalMoneyAmount();
-        } else {
-            consumables.put(property, consumables.get(property) + amount);
-        }
-        dataHandler.saveConsumables(consumables);
-        dataHandler.saveCoins(coins);
     }
 
     // Метод за получаване на символа за парите
@@ -206,5 +222,10 @@ public class ControlPanel {
 
     public Calendar getCalendar() {
         return calendar;
+    }
+
+    public void changeDateForStatistics(boolean increment) {
+        calendar.setSelectedDate(increment ? calendar.calculateYesterday(calendar.getSelectedDate()) : calendar.calculateTomorrow(calendar.getSelectedDate()));
+
     }
 }

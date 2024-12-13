@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.greasy.fighters.Main;
-import com.greasy.fighters.data.handler.DataHandler;
 import com.greasy.fighters.enums.Nominals;
-import com.greasy.fighters.statistic.Statistics;
 
 public class CoffeeMachine {
 
@@ -30,8 +28,6 @@ public class CoffeeMachine {
     private final HashMap<String, Integer> insertedCoins;
     private int insertedMoney;
 
-
-    // Конструктор. Приема като параметър списъка с наличните кафета.
     public CoffeeMachine() {
         insertedCoins = new HashMap<>();
     }
