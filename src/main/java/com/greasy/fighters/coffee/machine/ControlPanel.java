@@ -80,34 +80,12 @@ public class ControlPanel {
             }
             updateConsumable(consumable, coffee);
         }
-
         changeCoinsAmount(coins, true);
     }
 
     private boolean isEnoughConsumable(String consumableKey, int amountNeeded) {
         return consumables.getOrDefault(consumableKey, 0) >= amountNeeded;
     }
-/*
-    // Метод за промяна на количеството монети и актуализиране на парите в една централизирана точка
-    private void changeCoinsAmount(HashMap<String, Integer> coins, boolean add) {
-        for (Map.Entry<String, Integer> entry : coins.entrySet()) {
-            int newAmount = this.coins.getOrDefault(entry.getKey(), 0) + entry.getValue() * (add ? 1 : -1);
-            this.coins.put(entry.getKey(), newAmount);
-        }
-        // Актуализиране на стойността на парите след всички промени
-        updateTotalMoneyAmount();
-    }
-
-    // Метод за актуализиране на стойността на парите в една централизирана точка
-    private void updateTotalMoneyAmount() {
-        int money = coins.entrySet().stream()
-                .mapToInt(entry -> parseCoinAmount(entry.getKey()) * entry.getValue())
-                .sum();
-        consumables.put(Consumables.MONEY.toString(), money);
-        dataHandler.saveConsumables(consumables);
-    }
-    */
-
 
     // Метод за промяна на стойността на съставка
     public void changePropertiesValue(String property, int amount) {
@@ -121,6 +99,7 @@ public class ControlPanel {
         }
     }
 
+    // Метод за актуализиране на стойността на парите в една централизирана точка
     private void updateTotalMoneyAmount() {
         int totalMoney = coins.entrySet().stream()
                 .mapToInt(entry -> parseCoinAmount(entry.getKey()) * entry.getValue())
