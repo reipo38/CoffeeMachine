@@ -137,7 +137,7 @@ public class ControlPanel {
     }
 
     // Метод за актуализиране на количествата монети
-    public void dropCoins(HashMap<String, Integer> coins) {
+    public void removeCoins(HashMap<String, Integer> coins) {
         changeCoinsAmount(coins, false);
     }
 
@@ -189,10 +189,6 @@ public class ControlPanel {
     // Метод за получаване на имената на наличните кафета
     public String[] getCoffeeNames() {
         return coffeeMachine.getCoffeeNames();
-    }
-
-    public Statistics getStatistics() {
-        return statistics;
     }
 
     public DataHandler getDataHandler() {

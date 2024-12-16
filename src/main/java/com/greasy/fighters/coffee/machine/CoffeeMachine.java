@@ -60,14 +60,17 @@ public class CoffeeMachine {
     // Добавяне на пари
     public void insertCoin(Nominals nominal) {
         insertedFunds += nominal.toInt();
+        controlPanel.changePropertiesValue(nominal.toString(), 1);
         insertedCoins.put(nominal.toString(), insertedCoins.getOrDefault(nominal.toString(), 0) + 1);
     }
 
     public void buyCoffee(int id) {
         Coffee coffee = findCoffeeById(id);
         if (validateCoffeePurchase(coffee) && coffee != null) {
+            HashMap<String, Integer> change = calculateChangeCoinsAmount(insertedFunds - coffee.getPrice());
             updateInventory(coffee);
-            prepareCoffee(coffee, calculateChange(coffee)); // Извиква се метода, който принтира информация за покупката на кафето и върнатото ресто
+            prepareCoffee(coffee, formatChange(change)); // Извиква се метода, който принтира информация за покупката на кафето и върнатото ресто
+            controlPanel.removeCoins(change);
             insertedFunds = 0;                              // insertedFunds става нула, защото след покупка автоматично се връща рестото
             updateDailyStatistics(coffee);
         }
@@ -101,27 +104,43 @@ public class CoffeeMachine {
     // Връщане на вкараните в машината пари
     public void returnCoins() {
         if (insertedFunds > 0) {
-            displayOutputMassage(calculateCoinsAmount(insertedFunds));
+            HashMap<String, Integer> change = calculateChangeCoinsAmount(insertedFunds);
+            displayOutputMassage(formatChange(change));
+            controlPanel.removeCoins(change);
             insertedFunds = 0;
         }
     }
 
-    private String calculateChange(Coffee coffee) {
-        return calculateCoinsAmount(insertedFunds - coffee.getPrice());
-    }
-
-    private String calculateCoinsAmount(int changeAmount) {
+    private HashMap<String, Integer> calculateChangeCoinsAmount(int changeAmount) {
         HashMap<String, Integer> coins = new HashMap<>();
-        for (Nominals nominal : Nominals.values()) {            // Обхожда се масива, съдържащ номиналите на монетите. За всяка итерация i e един номинал
-            if (isCoinAvailable(nominal)) {                     // Проверка дали кафе машината има налични монети от този номинал. Ако няма, итерацията продължава със следващия номинал.
-                int coinAmount = changeAmount / nominal.toInt();      // Изчисляване на броя монети от този номинал, които са нужни
-                if (coinAmount != 0) {                          // Проверка дали са нужни 0 монети. Ако не, към резултатния низ се конкатенира номинала монети и броя
-                    coins.put(nominal.toString(), coinAmount);
+        for (Nominals nominal : Nominals.values()) {
+            // Проверка дали има налични монети от този номинал
+            if (isCoinAvailable(nominal)) {
+
+                // Изчисляване на броя монети, които са нужни
+                int coinAmountRequired = changeAmount / nominal.toInt();
+
+                // Получаване на наличните монети от този номинал
+                int availableCoins = controlPanel.getCoins().get(nominal.toString());
+
+                // Определяне колко монети да се върнат (минимум от нужните и наличните)
+                int coinsToReturn = Math.min(coinAmountRequired, availableCoins);
+
+                if (coinsToReturn > 0) {
+                    // Добавяне на монетите към резултата
+                    coins.put(nominal.toString(), coinsToReturn);
+                    // Намаляване на стойността на ресто, което трябва да бъде върнато
+                    changeAmount -= coinsToReturn * nominal.toInt();
                 }
-                changeAmount %= nominal.toInt();                      // amount става равно на остатъка при деление на използвания номинал
+
+                // Ако ресто е нула, няма нужда да продължаваме
+                if (changeAmount == 0) {
+                    break;
+                }
             }
         }
-        return formatChange(coins);
+
+        return coins;
     }
 
     // Помощен метод за calculateCoinsAmount(), който форматира номинал и брой от него в един низ.

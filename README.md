@@ -15,3 +15,4 @@ Java OOP project simulating a fully functional coffee machine, allowing users to
 
 ## Bugs
 * Consumables and coins can go negative
+* the coin amounts in the controlPanel are totally screwed up

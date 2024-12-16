@@ -3,7 +3,6 @@ package com.greasy.fighters.statistic;
 import java.util.HashMap;
 
 import com.greasy.fighters.coffee.machine.Coffee;
-import com.greasy.fighters.coffee.machine.ControlPanel;
 
 public class Statistics {
     private HashMap<String, Integer> dailyStatistic = new HashMap<>();
