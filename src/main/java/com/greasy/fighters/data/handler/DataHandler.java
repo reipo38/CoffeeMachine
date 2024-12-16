@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greasy.fighters.calendar.Calendar;
 import com.greasy.fighters.coffee.machine.Coffee;
-import com.greasy.fighters.coffee.machine.ControlPanel;
 
 public class DataHandler {
     private final Path consumablesPath = Paths.get("data/consumables.json");
@@ -25,18 +23,15 @@ public class DataHandler {
     private final Path moneyPath = Paths.get("data/money.json");
 
     private final ObjectMapper objectMapper;
-    private final ControlPanel controlPanel;
     private final Calendar calendar;
 
-    public DataHandler(ControlPanel controlPanel) {
+    public DataHandler() {
         objectMapper = new ObjectMapper();
-        this.controlPanel = controlPanel;
-        this.calendar = new Calendar();
+        calendar = new Calendar();
     }
 
-    public void saveStatistics() {
+    public void saveStatistics(HashMap<String, Integer> statistics) {
         Path statisticsPath = Paths.get("data/statistics/" + calendar.getCurrentDate() + ".json");
-        HashMap<String, Integer> statistics = controlPanel.getStatistics().getDailyStatistic();
         try {
             objectMapper.writeValue(new File(statisticsPath.toString()), statistics);
         } catch (IOException e) {
@@ -102,9 +97,8 @@ public class DataHandler {
 
     // ! не знам как по друг начин да се направят тези два метода
 
-    public HashMap<String, Integer> loadStatistic(LocalDate date) {
-        String filename = controlPanel.getCalendar().formatDate(date);
-        return loadStatisticByFilename(filename);
+    public HashMap<String, Integer> loadStatistic(String date) {
+        return loadStatisticByFilename(date);
     }
 
     // * ChatGPT ми каза това

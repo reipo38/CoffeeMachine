@@ -12,11 +12,11 @@ import javax.swing.UIManager;
 import com.greasy.fighters.coffee.machine.CoffeeMachine;
 
 public class VisualManager {
-    private static final int WINDOW_WIDTH = 800;
-    private static final int WINDOW_HEIGHT = 1000;
+    public static final int WINDOW_WIDTH = 800;
+    public static final int WINDOW_HEIGHT = 1000;
 
-    private static final int ELEMENT_HEIGHT = WINDOW_HEIGHT / 20;
-    private static final int ELEMENT_X_OFFSET = WINDOW_WIDTH / 30;
+    public static final int ELEMENT_HEIGHT = WINDOW_HEIGHT / 20;
+    public static final int ELEMENT_X_OFFSET = WINDOW_WIDTH / 30;
 
     private final ClientInterface clientInterface;
     private final AdminInterface adminInterface;
@@ -31,22 +31,20 @@ public class VisualManager {
         panel = new JPanel();
         panel.setLayout(null); // Flexible layout
         initializeUI();
-        clientInterface = new ClientInterface(panel, coffeeMachine, WINDOW_WIDTH, ELEMENT_HEIGHT, ELEMENT_X_OFFSET);
+        clientInterface = new ClientInterface(panel, coffeeMachine);
         regimeButton = createRegimeButton();
-        adminInterface = new AdminInterface(panel, coffeeMachine.getControlPanel(), WINDOW_WIDTH, ELEMENT_HEIGHT, ELEMENT_X_OFFSET, regimeButton);
+        adminInterface = new AdminInterface(panel, coffeeMachine.getControlPanel(), regimeButton);
         passwordPopup = new PasswordPopup(coffeeMachine.getControlPanel());
     }
 
     public void loadGUI() {
         clientInterface.loadClientInterface();
-        //adminInterface.loadAdminInterface();
         loadChangeRegimeButton();
         loadFrame();
     }
 
     public void setOutputText(String text) {
         clientInterface.setOutputText(text);
-        //clearAfterTimeout();
     }
 
     private void initializeUI() {
@@ -101,14 +99,5 @@ public class VisualManager {
             regimeButton.setText("Admin Menu");
             clientInterface.loadClientInterface();
         }
-    }
-
-    private void clearAfterTimeout() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                clientInterface.setOutputText("");
-            }
-        }, 15000);
     }
 }

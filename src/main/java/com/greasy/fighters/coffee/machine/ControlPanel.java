@@ -40,15 +40,15 @@ public class ControlPanel {
     // Конструктор на ControlPanel, инициализиращ кафемашината и зареждащ съставките
     public ControlPanel(CoffeeMachine coffeeMachine) {
         this.coffeeMachine = coffeeMachine;
-        this.dataHandler = new DataHandler(this);
-        this.statistics = new Statistics(this);
+        this.dataHandler = new DataHandler();
+        this.statistics = new Statistics();
         this.calendar = new Calendar();
         this.consumables = this.dataHandler.loadConsumables(); // Зареждаме съставките от външно хранилище (например JSON файл)
         this.coins = this.dataHandler.loadCoins();
 
         this.coffeeMachine.setCoffees(dataHandler.loadCoffees());
 
-        statistics.loadDailyStatistic();
+        statistics.setDailyStatistic(dataHandler.loadStatistic());
         updateTotalMoneyAmount();
     }
 
@@ -72,7 +72,7 @@ public class ControlPanel {
     }
 
     // Примерен метод, където всички промени се обработват в една точка
-    public void updateInternalValues(Coffee coffee, HashMap<String, Integer> coins) {
+    public void updateInventory(Coffee coffee, HashMap<String, Integer> coins) {
         // Обновяваме съставките въз основа на кафето и захарта
         for (Consumables consumable : Consumables.values()) {
             if (consumable == Consumables.MONEY) {
@@ -206,5 +206,10 @@ public class ControlPanel {
     public void changeDateForStatistics(boolean increment) {
         calendar.setSelectedDate(increment ? calendar.calculateYesterday(calendar.getSelectedDate()) : calendar.calculateTomorrow(calendar.getSelectedDate()));
 
+    }
+
+    public void addCoffeeToDailyStatistics(Coffee coffee) {
+        statistics.addCoffeeToDailyStatistic(coffee);
+        dataHandler.saveStatistics(statistics.getDailyStatistic());
     }
 }

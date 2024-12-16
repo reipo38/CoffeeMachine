@@ -22,12 +22,13 @@ import com.greasy.fighters.coffee.machine.ControlPanel;
 import com.greasy.fighters.enums.Consumables;
 import com.greasy.fighters.enums.Nominals;
 
+import static com.greasy.fighters.gui.VisualManager.WINDOW_WIDTH;
+import static com.greasy.fighters.gui.VisualManager.ELEMENT_HEIGHT;
+import static com.greasy.fighters.gui.VisualManager.ELEMENT_X_OFFSET;
+
 public class AdminInterface {
     private final ControlPanel controlPanel;
 
-    private final int windowWidth;
-    private final int elementHeight;
-    private final int elementXOffset;
 
     // Определяне на конфигурацията на компонентите по редове
     private final int[][] componentTypePerRow = new int[][]{
@@ -63,12 +64,9 @@ public class AdminInterface {
     private final JButton regimeButton;
 
     // Конструктор за инициализиране на административния интерфейс
-    public AdminInterface(JPanel panel, ControlPanel controlPanel, int windowWidth, int elementHeight, int elementXOffset, JButton regimeButton) {
+    public AdminInterface(JPanel panel, ControlPanel controlPanel, JButton regimeButton) {
         this.panel = panel;
         this.controlPanel = controlPanel;
-        this.windowWidth = windowWidth;
-        this.elementHeight = elementHeight;
-        this.elementXOffset = elementXOffset;
         this.regimeButton = regimeButton;
         this.panel.setLayout(null);
     }
@@ -86,12 +84,12 @@ public class AdminInterface {
 
     // Зареждане на компонентите по редове
     private void loadComponentsRow(int i) {
-        int yPosition = elementHeight * (4 + i * 2) - (i != 3 ? 0 : elementHeight/2);
-        int width = (windowWidth - elementXOffset) / componentTypePerRow[i].length;
+        int yPosition = ELEMENT_HEIGHT * (4 + i * 2) - (i != 3 ? 0 : ELEMENT_HEIGHT/2);
+        int width = (WINDOW_WIDTH - ELEMENT_X_OFFSET) / componentTypePerRow[i].length;
         int[] componentTypes = componentTypePerRow[i];
         for (int id = 0; id < componentTypes.length; id++) {
             Component component = loadComponent(i, id);
-            component.setBounds(elementXOffset + width * id, yPosition, width - elementXOffset, elementHeight);
+            component.setBounds(ELEMENT_X_OFFSET + width * id, yPosition, width - ELEMENT_X_OFFSET, ELEMENT_HEIGHT);
             components[i][id] = component;
             panel.add(component);
         }
@@ -160,7 +158,7 @@ public class AdminInterface {
             int value = left ? controlPanel.getConsumableAmount(entry) : controlPanel.getCoinAmount(entry);
             String strValue = left && i == 0 ? value / 100 + "." + value % 100 : String.valueOf(value);
             JLabel label = new JLabel(String.format("%s available: %s", entry, strValue));
-            label.setBounds(left ? elementXOffset : windowWidth / 2, elementHeight / 2 + elementHeight / 2 * i, windowWidth, elementHeight);
+            label.setBounds(left ? ELEMENT_X_OFFSET : WINDOW_WIDTH / 2, ELEMENT_HEIGHT / 2 + ELEMENT_HEIGHT / 2 * i, WINDOW_WIDTH, ELEMENT_HEIGHT);
             panel.add(label);
         }
     }
@@ -171,14 +169,14 @@ public class AdminInterface {
             JLabel label = new JLabel(labelsTitles[i]);
             if (i == labelsTitles.length - 1)
                 i++; // Инкрементиране на индекса за последния етикет, за да се подредят статистиките правилно
-            label.setBounds(elementXOffset, elementHeight * 4 + elementHeight * 2 * i - elementHeight / 2, windowWidth, elementHeight / 2);
+            label.setBounds(ELEMENT_X_OFFSET, ELEMENT_HEIGHT * 4 + ELEMENT_HEIGHT * 2 * i - ELEMENT_HEIGHT / 2, WINDOW_WIDTH, ELEMENT_HEIGHT / 2);
             panel.add(label);
         }
     }
 
     // Зареждане и показване на диаграмата за статистиките
     private void loadDiagram(LocalDate date) {
-        HashMap<String, Integer> coffeeData = controlPanel.getDataHandler().loadStatistic(date);
+        HashMap<String, Integer> coffeeData = controlPanel.getDataHandler().loadStatistic(controlPanel.getCalendar().formatDate(date));
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (Map.Entry<String, Integer> entry : coffeeData.entrySet()) {
             dataset.addValue(entry.getValue(), "Ordered", entry.getKey()); // Добавяне на стойностите в набора за диаграмата
@@ -186,7 +184,7 @@ public class AdminInterface {
         JFreeChart chart = ChartFactory.createBarChart(controlPanel.getCalendar().formatDate(date), "", "Ordered", dataset);
         chart.setBackgroundPaint(new Color(238, 238, 238)); // * за да се слива с фона
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setBounds(elementXOffset, elementHeight * 13, windowWidth - elementXOffset * 2, elementHeight * 5);
+        chartPanel.setBounds(ELEMENT_X_OFFSET, ELEMENT_HEIGHT * 13, WINDOW_WIDTH - ELEMENT_X_OFFSET * 2, ELEMENT_HEIGHT * 5);
         panel.add(chartPanel); // Добавяне на диаграмата в панела
     }
 }
