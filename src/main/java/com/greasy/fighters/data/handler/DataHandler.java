@@ -25,13 +25,22 @@ public class DataHandler {
     private final ObjectMapper objectMapper;
     private final Calendar calendar;
 
-    public DataHandler() {
+    public DataHandler(Calendar calendar) {
         objectMapper = new ObjectMapper();
-        calendar = new Calendar();
+        this.calendar = calendar;
+    }
+
+    public ArrayList<Coffee> loadCoffees() {
+        try {
+            return objectMapper.readValue(coffeesPath.toFile(), new TypeReference<>() {
+            });
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load coffee types from path: " + coffeesPath, e);
+        }
     }
 
     public void saveStatistics(HashMap<String, Integer> statistics) {
-        Path statisticsPath = Paths.get("data/statistics/" + calendar.getCurrentDate() + ".json");
+        Path statisticsPath = getStatisticsPath(calendar.getCurrentDate());
         try {
             objectMapper.writeValue(new File(statisticsPath.toString()), statistics);
         } catch (IOException e) {
@@ -47,23 +56,52 @@ public class DataHandler {
         return loadHashMapStringInteger(moneyPath);
     }
 
+    public String getPassword() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(passwordPath.toFile()))) {
+            return reader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading password file: " + passwordPath, e);
+        }
+    }
+
+    public HashMap<String, Integer> loadStatistic() {
+        return loadHashMapStringInteger(getStatisticsPath(calendar.getCurrentDate()));
+    }
+
+    private Path getStatisticsPath(String date) {
+        return Paths.get("data/statistics/" + date + ".json");
+    }
+
+    private HashMap<String, Integer> loadHashMapStringInteger(Path filePath) {
+        try {
+            return objectMapper.readValue(filePath.toFile(), new TypeReference<>() {
+            });
+        } catch (FileNotFoundException e) {
+            return new HashMap<>();
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading file: " + filePath, e);
+        }
+    }
+
+    private void saveToJson(Path path, Object data) {
+        File file = new File(path.toString());
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, data); // * за да се показва хубаво
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void saveConsumables(HashMap<String, Integer> consumables) {
         saveToJson(consumablesPath, consumables);
     }
 
-    public ArrayList<Coffee> loadCoffees() {
-        ArrayList<Coffee> coffeeTypes;
-        try {
-            coffeeTypes = objectMapper.readValue(new File(coffeesPath.toString()), new TypeReference<>() {
-            });
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return coffeeTypes;
-    }
-
     public void saveCoffees(ArrayList<Coffee> coffees) {
         saveToJson(coffeesPath, coffees);
+    }
+
+    public void saveCoins(HashMap<String, Integer> coins) {
+        saveToJson(moneyPath, coins);
     }
 
     private void savePassword(String password) { // * ненужен метод, ама го добавих, ако евентуално добавим смяна на парола
@@ -74,65 +112,5 @@ public class DataHandler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public String getPassword() {
-        File passwordFile = new File(passwordPath.toString());
-        String password;
-
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(passwordFile));
-            password = reader.readLine();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return password;
-    }
-
-    public HashMap<String, Integer> loadStatistic() {
-        String filename = calendar.getCurrentDate();
-        return loadStatisticByFilename(filename);
-    }
-
-    // ! не знам как по друг начин да се направят тези два метода
-
-    public HashMap<String, Integer> loadStatistic(String date) {
-        return loadStatisticByFilename(date);
-    }
-
-    // * ChatGPT ми каза това
-    private HashMap<String, Integer> loadStatisticByFilename(String filename) {
-        Path filePath = Paths.get("data/statistics", filename + ".json");
-        return loadHashMapStringInteger(filePath);
-    }
-
-    public HashMap<String, Integer> loadHashMapStringInteger(Path filePath) {
-        String filePathString = filePath.toString();
-        try {
-            return objectMapper.readValue(
-                    new File(filePathString),
-                    new TypeReference<>() {
-                    }
-            );
-        } catch (FileNotFoundException e) {
-            return new HashMap<>();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void saveToJson(Path path, Object data) {
-        File file = new File(path.toString());
-
-        try {
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, data); // * за да се показва хубаво
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void saveCoins(HashMap<String, Integer> coins) {
-        saveToJson(moneyPath, coins);
     }
 }

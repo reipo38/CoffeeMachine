@@ -173,13 +173,12 @@ public class AdminInterface {
 
     // Зареждане и показване на диаграмата за статистиките
     private void loadDiagram() {
-        String date = controlPanel.getSelectedStatisticsDate();
-        HashMap<String, Integer> coffeeData = controlPanel.getStatisticsForDate(date);
+        HashMap<String, Integer> coffeeData = controlPanel.getSelectedStatistics();
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (Map.Entry<String, Integer> entry : coffeeData.entrySet()) {
             dataset.addValue(entry.getValue(), "Ordered", entry.getKey()); // Добавяне на стойностите в набора за диаграмата
         }
-        JFreeChart chart = ChartFactory.createBarChart(date, "", "Ordered", dataset);
+        JFreeChart chart = ChartFactory.createBarChart(controlPanel.getSelectedStatisticsDate(), "", "Ordered", dataset);
         chart.setBackgroundPaint(new Color(238, 238, 238)); // * за да се слива с фона
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setBounds(ELEMENT_X_OFFSET, ELEMENT_HEIGHT * 13, WINDOW_WIDTH - ELEMENT_X_OFFSET * 2, ELEMENT_HEIGHT * 5);

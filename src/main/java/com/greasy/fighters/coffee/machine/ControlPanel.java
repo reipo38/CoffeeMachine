@@ -43,14 +43,15 @@ public class ControlPanel {
         this.coffeeMachine = coffeeMachine;
         this.coffeeMachine.setControlPanel(this);
 
-        dataHandler = new DataHandler();
+
         calendar = new Calendar();
+        dataHandler = new DataHandler(calendar);
         statistics = new Statistics();
         consumables = dataHandler.loadConsumables(); // Зареждаме съставките от външно хранилище (например JSON файл)
         coins = dataHandler.loadCoins();
 
         this.coffeeMachine.setCoffees(dataHandler.loadCoffees());
-        statistics.setDailyStatistic(dataHandler.loadStatistic(calendar.getCurrentDate()));
+        statistics.setDailyStatistic(dataHandler.loadStatistic());
 
         updateTotalMoneyAmount();
     }
@@ -204,7 +205,7 @@ public class ControlPanel {
     }
 
     public String getSelectedStatisticsDate() {
-        return calendar.formatDate(calendar.getSelectedDate());
+        return calendar.getCurrentDate();
     }
 
     public void changeSelectedStatisticsDate(boolean increment) {
@@ -215,8 +216,8 @@ public class ControlPanel {
         }
     }
 
-    public HashMap<String, Integer> getStatisticsForDate(String date) {
-        return dataHandler.loadStatistic(date);
+    public HashMap<String, Integer> getSelectedStatistics() {
+        return dataHandler.loadStatistic();
     }
 
     public void addCoffeeToDailyStatistics(Coffee coffee) {
