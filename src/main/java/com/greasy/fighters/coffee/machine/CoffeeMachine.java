@@ -35,12 +35,12 @@ public class CoffeeMachine {
     }
 
     // Метод за добавяне на ново кафе
-    public void addNewCoffee(Coffee coffee) {
+    public void addCoffee(Coffee coffee) {
         coffees.add(coffee);
     }
 
     // Метод за изтриване на кафе
-    public void deleteCoffee(Coffee coffee) {
+    public void removeCoffee(Coffee coffee) {
         coffees.remove(coffee);
     }
 
@@ -57,32 +57,38 @@ public class CoffeeMachine {
     // Добавяне на пари
     public void insertCoin(Nominals nominal) {
         insertedFunds += nominal.toInt();
-        controlPanel.changePropertiesValue(nominal.toString(), 1);
+        controlPanel.addCoin(nominal);
         insertedCoins.put(nominal.toString(), insertedCoins.getOrDefault(nominal.toString(), 0) + 1);
     }
 
+    // Връщане на вкараните в машината пари
+    public void returnCoins() {
+        if (insertedFunds > 0) {
+            HashMap<String, Integer> change = calculateChangeCoinsAmount(insertedFunds);
+            displayOutputMassage(formatChange(change));
+            resetInsertedCoins(change);
+        }
+    }
+
     public void buyCoffee(int id) {
-        Coffee coffee = findCoffeeById(id);
-        if (validateCoffeePurchase(coffee) && coffee != null) {
+        Coffee coffee = coffees.get(id);
+        if (validateCoffeePurchase(coffee)) {
             HashMap<String, Integer> change = calculateChangeCoinsAmount(insertedFunds - coffee.getPrice());
-            updateInventory(coffee);
-            prepareCoffee(coffee, formatChange(change)); // Извиква се метода, който принтира информация за покупката на кафето и върнатото ресто
-            controlPanel.removeCoins(change);
-            insertedFunds = 0;                              // insertedFunds става нула, защото след покупка автоматично се връща рестото
+            processPurchase(coffee, change);
             updateDailyStatistics(coffee);
         }
     }
 
+    private void processPurchase(Coffee coffee, HashMap<String, Integer> change) {
+        updateInventory(coffee);
+        prepareCoffee(coffee, formatChange(change));
+        resetInsertedCoins(change);
+    }
+
     // Проверка дали е възможно да се приготви избраното кафе
     private boolean validateCoffeePurchase(Coffee coffee) {
-        if (!controlPanel.ingredientsAvailable(coffee)) {   // Проверка дали са налични нужните съставки
-            displayOutputMassage("Sorry, this coffee is currently not available.");
-            return false;
-        }
-        if (!hasSufficientFunds(coffee)) {  // Проверка дали са вкарани достатъчно пари
-            displayOutputMassage("Not enough money.");
-            return false;
-        }
+        if (!controlPanel.ingredientsAvailable(coffee)) return insufficientIngredientsError();
+        if (!hasSufficientFunds(coffee))                return insufficientMoneyError();
         return true;
     }
 
@@ -98,46 +104,26 @@ public class CoffeeMachine {
                 changeString);
     }
 
-    // Връщане на вкараните в машината пари
-    public void returnCoins() {
-        if (insertedFunds > 0) {
-            HashMap<String, Integer> change = calculateChangeCoinsAmount(insertedFunds);
-            displayOutputMassage(formatChange(change));
-            controlPanel.removeCoins(change);
-            insertedFunds = 0;
-        }
-    }
-
     private HashMap<String, Integer> calculateChangeCoinsAmount(int changeAmount) {
         HashMap<String, Integer> coins = new HashMap<>();
         for (Nominals nominal : Nominals.values()) {
-            // Проверка дали има налични монети от този номинал
-            if (isCoinAvailable(nominal)) {
-
-                // Изчисляване на броя монети, които са нужни
-                int coinAmountRequired = changeAmount / nominal.toInt();
-
-                // Получаване на наличните монети от този номинал
-                int availableCoins = controlPanel.getCoins().get(nominal.toString());
-
-                // Определяне колко монети да се върнат (минимум от нужните и наличните)
-                int coinsToReturn = Math.min(coinAmountRequired, availableCoins);
-
-                if (coinsToReturn > 0) {
-                    // Добавяне на монетите към резултата
-                    coins.put(nominal.toString(), coinsToReturn);
-                    // Намаляване на стойността на ресто, което трябва да бъде върнато
-                    changeAmount -= coinsToReturn * nominal.toInt();
-                }
-
-                // Ако ресто е нула, няма нужда да продължаваме
-                if (changeAmount == 0) {
-                    break;
-                }
-            }
+            if (changeAmount == 0) break;   // Ако ресто е нула, няма нужда да продължаваме
+            if (!isCoinAvailable(nominal)) continue;    // Проверка дали има налични монети от този номинал
+            int coinsToReturn = calculateCoinsForNominal(changeAmount, nominal);
+            if (coinsToReturn > 0) coins.put(nominal.toString(), coinsToReturn);   // Добавяне на монетите към резултата, само ако са повече от 0
+            changeAmount -= coinsToReturn * nominal.toInt();    // Намаляване на стойността на ресто, което трябва да бъде върнато
         }
-
         return coins;
+    }
+
+    private int calculateCoinsForNominal(int changeAmount, Nominals nominal) {
+        int requiredCoins = changeAmount / nominal.toInt();    // Изчисляване на броя монети, които са нужни
+        int availableCoins = getAvailableCoins(nominal);   // Получаване на наличните монети от този номинал
+        return Math.min(requiredCoins, availableCoins);      // Определяне колко монети да се върнат (минимум от нужните и наличните)
+    }
+
+    private int getAvailableCoins(Nominals nominal) {
+        return controlPanel.getCoins().getOrDefault(nominal.toString(), 0);
     }
 
     // Помощен метод за calculateCoinsAmount(), който форматира номинал и брой от него в един низ.
@@ -157,13 +143,6 @@ public class CoffeeMachine {
         Main.visualManager.setOutputText(message);
     }
 
-    private Coffee findCoffeeById(int id) {
-        if (id < 0 || id >= coffees.size()) {
-            return null; // Индексът е извън допустимия диапазон
-        }
-        return coffees.get(id);
-    }
-
     private void updateDailyStatistics(Coffee coffee) {
         controlPanel.addCoffeeToDailyStatistics(coffee);
     }
@@ -174,6 +153,11 @@ public class CoffeeMachine {
 
     private void updateInventory(Coffee coffee) {
         controlPanel.updateInventory(coffee, insertedCoins); // Промените в наличните съставки се отбелязват
+    }
+
+    private void resetInsertedCoins(HashMap<String, Integer> insertedCoins) {
+        controlPanel.removeCoins(insertedCoins);
+        insertedFunds = 0;
     }
 
     // get метод за парите, вкарани в кафемашината
@@ -219,5 +203,15 @@ public class CoffeeMachine {
 
     protected void setControlPanel(ControlPanel controlPanel) {
         this.controlPanel = controlPanel;
+    }
+
+    private boolean insufficientIngredientsError() {
+        displayOutputMassage("Sorry, this coffee is currently not available.");
+        return false;
+    }
+
+    private boolean insufficientMoneyError() {
+        displayOutputMassage("Not enough money.");
+        return false;
     }
 }

@@ -116,7 +116,6 @@ public class DataHandler {
                     }
             );
         } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + filePathString);
             return new HashMap<>();
         } catch (Exception e) {
             throw new RuntimeException(e);

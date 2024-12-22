@@ -1,12 +1,12 @@
 package com.greasy.fighters.coffee.machine;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.greasy.fighters.calendar.Calendar;
 import com.greasy.fighters.data.handler.DataHandler;
 import com.greasy.fighters.enums.Consumables;
+import com.greasy.fighters.enums.Nominals;
 import com.greasy.fighters.statistic.Statistics;
 
 public class ControlPanel {
@@ -25,8 +25,8 @@ public class ControlPanel {
 
     private final CoffeeMachine coffeeMachine; // Инстанция на кафемашината, която управляваме
     private final Statistics statistics;
-    private final DataHandler dataHandler;
     private final Calendar calendar;
+    private final DataHandler dataHandler;
 
     private final HashMap<String, Integer> consumables; // Речник със съставките в кафемашината
 
@@ -42,28 +42,29 @@ public class ControlPanel {
     public ControlPanel(CoffeeMachine coffeeMachine) {
         this.coffeeMachine = coffeeMachine;
         this.coffeeMachine.setControlPanel(this);
-        this.dataHandler = new DataHandler();
-        this.statistics = new Statistics();
-        this.calendar = new Calendar();
-        this.consumables = this.dataHandler.loadConsumables(); // Зареждаме съставките от външно хранилище (например JSON файл)
-        this.coins = this.dataHandler.loadCoins();
+
+        dataHandler = new DataHandler();
+        calendar = new Calendar();
+        statistics = new Statistics();
+        consumables = dataHandler.loadConsumables(); // Зареждаме съставките от външно хранилище (например JSON файл)
+        coins = dataHandler.loadCoins();
 
         this.coffeeMachine.setCoffees(dataHandler.loadCoffees());
+        statistics.setDailyStatistic(dataHandler.loadStatistic(calendar.getCurrentDate()));
 
-        statistics.setDailyStatistic(dataHandler.loadStatistic());
         updateTotalMoneyAmount();
     }
 
     // Метод за добавяне на ново кафе към кафемашината
     public void addNewCoffee(String coffeeType, int price, int needAmountOfCoffee, boolean hasMilk, int waterNeeded) {
-        coffeeMachine.addNewCoffee(new Coffee(coffeeType, price, needAmountOfCoffee, hasMilk, waterNeeded));
+        coffeeMachine.addCoffee(new Coffee(coffeeType, price, needAmountOfCoffee, hasMilk, waterNeeded));
         saveChanges();
     }
 
     // Метод за изтриване на кафе по име от кафемашината
     public void deleteCoffeeByName(String coffeeName) {
         Coffee coffee = coffeeMachine.getCoffeeByName(coffeeName);
-        coffeeMachine.deleteCoffee(coffee);
+        coffeeMachine.removeCoffee(coffee);
         saveChanges();
     }
 
@@ -75,16 +76,14 @@ public class ControlPanel {
                 isEnoughConsumable(Consumables.SUGAR.toString(), coffeeMachine.getSugarSelected());
     }
 
-    // Примерен метод, където всички промени се обработват в една точка
     public void updateInventory(Coffee coffee, HashMap<String, Integer> coins) {
-        // Обновяваме съставките въз основа на кафето и захарта
         for (Consumables consumable : Consumables.values()) {
             if (consumable == Consumables.MONEY) {
-                continue;  // Пропускаме парите тук
+                updateCoinsAmount(coins, true);
+            } else {
+                updateConsumable(consumable, coffee);
             }
-            updateConsumable(consumable, coffee);
         }
-        changeCoinsAmount(coins, true);
     }
 
     // Метод за промяна на стойността на съставка
@@ -98,7 +97,7 @@ public class ControlPanel {
         saveChanges();
     }
 
-    private void changeCoinsAmount(HashMap<String, Integer> coins, boolean add) {
+    private void updateCoinsAmount(HashMap<String, Integer> coins, boolean add) {
         for (Map.Entry<String, Integer> entry : coins.entrySet()) {
             int newAmount = this.coins.getOrDefault(entry.getKey(), 0) + entry.getValue() * (add ? 1 : -1);
             this.coins.put(entry.getKey(), newAmount);
@@ -112,7 +111,6 @@ public class ControlPanel {
                 .stream()
                 .mapToInt(entry -> parseCoinAmount(entry.getKey()) * entry.getValue()) // Convert key to int and multiply by value
                 .sum();
-        System.out.println(totalMoney);
         consumables.put(Consumables.MONEY.toString(), totalMoney);
         saveChanges();
     }
@@ -146,9 +144,13 @@ public class ControlPanel {
         dataHandler.saveCoins(coins);
     }
 
+    public void addCoin(Nominals nominal) {
+        changePropertiesValue(nominal.toString(), 1);
+    }
+
     // Метод за актуализиране на количествата монети
     public void removeCoins(HashMap<String, Integer> coins) {
-        changeCoinsAmount(coins, false);
+        updateCoinsAmount(coins, false);
     }
 
     // Метод за получаване на символа за парите

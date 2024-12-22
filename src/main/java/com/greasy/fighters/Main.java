@@ -10,9 +10,6 @@ public class Main {
     public static final VisualManager visualManager = new VisualManager(coffeeMachine, controlPanel);
 
     public static void main(String[] args) {
-
-        System.out.println(controlPanel.getCoins());
-
         controlPanel.setSugarMax(25);
         controlPanel.setMilkNeeded(25);
 
