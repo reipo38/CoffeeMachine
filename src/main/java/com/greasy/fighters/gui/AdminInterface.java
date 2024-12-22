@@ -2,7 +2,6 @@ package com.greasy.fighters.gui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,7 +78,7 @@ public class AdminInterface {
         for (int i = 0; i < componentTypePerRow.length; i++) {
             loadComponentsRow(i); // Зареждане на компонентите по редове
         }
-        loadDiagram(controlPanel.getCalendar().getSelectedDate()); // Зареждане на диаграмата
+        loadDiagram(); // Зареждане на диаграмата
     }
 
     // Зареждане на компонентите по редове
@@ -125,10 +124,8 @@ public class AdminInterface {
     private void handleButtonAction(int i, int id) {
         try {
             switch (i) {
-                case 0 ->
-                        controlPanel.changePropertiesValue((String) ((JComboBox<String>) components[0][0]).getSelectedItem(), Integer.parseInt(((PlaceholderJTextField) components[0][1]).getText()) * (id == 2 ? 1 : -1));
-                case 1 ->
-                        controlPanel.deleteCoffeeByName((String) ((JComboBox<String>) components[1][0]).getSelectedItem());
+                case 0 -> controlPanel.changePropertiesValue((String) ((JComboBox<String>) components[0][0]).getSelectedItem(), Integer.parseInt(((PlaceholderJTextField) components[0][1]).getText()) * (id == 2 ? 1 : -1));
+                case 1 -> controlPanel.deleteCoffeeByName((String) ((JComboBox<String>) components[1][0]).getSelectedItem());
                 case 2 -> controlPanel.addNewCoffee(
                         ((PlaceholderJTextField) components[2][0]).getText(),                       // име на кафето
                         Integer.parseInt(((PlaceholderJTextField) components[3][0]).getText()),     // цена на кафето
@@ -175,13 +172,14 @@ public class AdminInterface {
     }
 
     // Зареждане и показване на диаграмата за статистиките
-    private void loadDiagram(LocalDate date) {
-        HashMap<String, Integer> coffeeData = controlPanel.getDataHandler().loadStatistic(controlPanel.getCalendar().formatDate(date));
+    private void loadDiagram() {
+        String date = controlPanel.getSelectedStatisticsDate();
+        HashMap<String, Integer> coffeeData = controlPanel.getStatistics(date);
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (Map.Entry<String, Integer> entry : coffeeData.entrySet()) {
             dataset.addValue(entry.getValue(), "Ordered", entry.getKey()); // Добавяне на стойностите в набора за диаграмата
         }
-        JFreeChart chart = ChartFactory.createBarChart(controlPanel.getCalendar().formatDate(date), "", "Ordered", dataset);
+        JFreeChart chart = ChartFactory.createBarChart(date, "", "Ordered", dataset);
         chart.setBackgroundPaint(new Color(238, 238, 238)); // * за да се слива с фона
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setBounds(ELEMENT_X_OFFSET, ELEMENT_HEIGHT * 13, WINDOW_WIDTH - ELEMENT_X_OFFSET * 2, ELEMENT_HEIGHT * 5);

@@ -1,5 +1,6 @@
 package com.greasy.fighters.coffee.machine;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +41,7 @@ public class ControlPanel {
     // Конструктор на ControlPanel, инициализиращ кафемашината и зареждащ съставките
     public ControlPanel(CoffeeMachine coffeeMachine) {
         this.coffeeMachine = coffeeMachine;
+        this.coffeeMachine.setControlPanel(this);
         this.dataHandler = new DataHandler();
         this.statistics = new Statistics();
         this.calendar = new Calendar();
@@ -191,12 +193,12 @@ public class ControlPanel {
         return coffeeMachine.getCoffeeNames();
     }
 
-    public DataHandler getDataHandler() {
-        return dataHandler;
+    public String getSelectedStatisticsDate() {
+        return calendar.formatDate(calendar.getSelectedDate());
     }
 
-    public Calendar getCalendar() {
-        return calendar;
+    public HashMap<String, Integer> getStatistics(String date) {
+        return dataHandler.loadStatistic(date);
     }
 
     public void changeDateForStatistics(boolean increment) {
@@ -207,5 +209,13 @@ public class ControlPanel {
     public void addCoffeeToDailyStatistics(Coffee coffee) {
         statistics.addCoffeeToDailyStatistic(coffee);
         dataHandler.saveStatistics(statistics.getDailyStatistic());
+    }
+
+    public void saveCoffees(ArrayList<Coffee> coffees) {
+        dataHandler.saveCoffees(coffees);
+    }
+
+    public String getPassword() {
+        return dataHandler.getPassword();
     }
 }

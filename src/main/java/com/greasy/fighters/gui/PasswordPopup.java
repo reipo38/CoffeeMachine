@@ -15,7 +15,7 @@ public class PasswordPopup {
 
     public PasswordPopup(ControlPanel controlPanel) {
         this.controlPanel = controlPanel;
-        password = controlPanel.getDataHandler().getPassword();
+        password = controlPanel.getPassword();
         try {
             md = MessageDigest.getInstance("SHA-256"); // алгоритъм за хеширане SHA-256
         } catch (NoSuchAlgorithmException e) {

@@ -47,7 +47,7 @@ public class ClientInterface {
                 Stream.concat(Arrays.stream(Nominals.stringValues()), Stream.of("Drop")).toArray(String[]::new),
                 new String[]{"-", "+"},
                 IntStream.range(0, coffeeMachine.getCoffeeNames().length)
-                        .mapToObj(i -> coffeeMachine.getCoffees().get(i).getName() + " - " + coffeeMachine.getCoffees().get(i).priceString() + coffeeMachine.getControlPanel().getMoneySymbol())
+                        .mapToObj(i -> coffeeMachine.getCoffees().get(i).getName() + " - " + coffeeMachine.getCoffees().get(i).priceString() + coffeeMachine.getMoneySymbol())
                         .toArray(String[]::new)
         };
     }

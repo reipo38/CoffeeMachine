@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import com.greasy.fighters.coffee.machine.CoffeeMachine;
+import com.greasy.fighters.coffee.machine.ControlPanel;
 
 public class VisualManager {
     public static final int WINDOW_WIDTH = 800;
@@ -27,14 +28,14 @@ public class VisualManager {
 
     private JButton regimeButton;
 
-    public VisualManager(CoffeeMachine coffeeMachine) {
+    public VisualManager(CoffeeMachine coffeeMachine, ControlPanel controlPanel) {
         panel = new JPanel();
         panel.setLayout(null); // Flexible layout
         initializeUI();
         clientInterface = new ClientInterface(panel, coffeeMachine);
         regimeButton = createRegimeButton();
-        adminInterface = new AdminInterface(panel, coffeeMachine.getControlPanel(), regimeButton);
-        passwordPopup = new PasswordPopup(coffeeMachine.getControlPanel());
+        adminInterface = new AdminInterface(panel, controlPanel, regimeButton);
+        passwordPopup = new PasswordPopup(controlPanel);
     }
 
     public void loadGUI() {

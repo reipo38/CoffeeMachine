@@ -22,7 +22,7 @@ public class CoffeeMachine {
      */
 
     private ArrayList<Coffee> coffees;
-    private final ControlPanel controlPanel;
+    private ControlPanel controlPanel;
 
     private int sugarSelected;
 
@@ -32,19 +32,18 @@ public class CoffeeMachine {
     public CoffeeMachine() {
         insertedCoins = new HashMap<>();
         coffees = new ArrayList<>();
-        controlPanel = new ControlPanel(this);
     }
 
     // Метод за добавяне на ново кафе
     public void addNewCoffee(Coffee coffee) {
         coffees.add(coffee);
-        controlPanel.getDataHandler().saveCoffees(coffees);
+        controlPanel.saveCoffees(coffees);
     }
 
     // Метод за изтриване на кафе
     public void deleteCoffee(Coffee coffee) {
         coffees.remove(coffee);
-        controlPanel.getDataHandler().saveCoffees(coffees);
+        controlPanel.saveCoffees(coffees);
     }
 
     // Метод за промяна на количеството захар. Потребителят само решава дали ще увеличава или намалява количеството захар.
@@ -219,5 +218,13 @@ public class CoffeeMachine {
 
     public void setCoffees(ArrayList<Coffee> coffees) {
         this.coffees = coffees;
+    }
+
+    public String getMoneySymbol() {
+        return controlPanel.getMoneySymbol();
+    }
+
+    protected void setControlPanel(ControlPanel controlPanel) {
+        this.controlPanel = controlPanel;
     }
 }
