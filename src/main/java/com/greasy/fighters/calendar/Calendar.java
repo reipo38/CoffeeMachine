@@ -22,27 +22,20 @@ public class Calendar {
         this.selectedDate = selectedDate;
     }
 
+    public void setSelectedDateYesterday() {
+        selectedDate = calculateDate(selectedDate, -1);
+    }
+
+    public void setSelectedDateTomorrow() {
+        selectedDate = calculateDate(selectedDate, 1);
+    }
+
     public String getCurrentDate() {
         LocalDate now = LocalDate.now();
         return formatDate(now);
     }
 
-    private LocalDate stringToLocalDate(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM.dd.yyyy");
-        LocalDate localDate = LocalDate.parse(date, formatter);
-
-        return localDate;
-    }
-
-    public LocalDate calculateDate(LocalDate date, int daysToAdd) {
+    private LocalDate calculateDate(LocalDate date, int daysToAdd) {
         return date.plusDays(daysToAdd);
-    }
-    
-    public LocalDate calculateTomorrow(LocalDate date) {
-        return calculateDate(date, 1);
-    }
-    
-    public LocalDate calculateYesterday(LocalDate date) {
-        return calculateDate(date, -1);
     }
 }

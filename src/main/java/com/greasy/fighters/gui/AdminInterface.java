@@ -132,7 +132,7 @@ public class AdminInterface {
                         Integer.parseInt(((PlaceholderJTextField) components[3][1]).getText()),     // количество кафе
                         Boolean.parseBoolean(((PlaceholderJTextField) components[3][2]).getText()), // съдържа ли мляко
                         Integer.parseInt(((PlaceholderJTextField) components[3][3]).getText()));    // необходимо количество вода
-                case 4 -> controlPanel.changeDateForStatistics(id == 0);
+                case 4 -> controlPanel.changeSelectedStatisticsDate(id == 0);
             }
             reloadPanel(); // Презареждане на панела
         } catch (NumberFormatException ignored) {
@@ -174,7 +174,7 @@ public class AdminInterface {
     // Зареждане и показване на диаграмата за статистиките
     private void loadDiagram() {
         String date = controlPanel.getSelectedStatisticsDate();
-        HashMap<String, Integer> coffeeData = controlPanel.getStatistics(date);
+        HashMap<String, Integer> coffeeData = controlPanel.getStatisticsForDate(date);
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         for (Map.Entry<String, Integer> entry : coffeeData.entrySet()) {
             dataset.addValue(entry.getValue(), "Ordered", entry.getKey()); // Добавяне на стойностите в набора за диаграмата

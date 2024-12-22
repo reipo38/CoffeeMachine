@@ -57,18 +57,20 @@ public class ControlPanel {
     // Метод за добавяне на ново кафе към кафемашината
     public void addNewCoffee(String coffeeType, int price, int needAmountOfCoffee, boolean hasMilk, int waterNeeded) {
         coffeeMachine.addNewCoffee(new Coffee(coffeeType, price, needAmountOfCoffee, hasMilk, waterNeeded));
+        saveChanges();
     }
 
     // Метод за изтриване на кафе по име от кафемашината
     public void deleteCoffeeByName(String coffeeName) {
         Coffee coffee = coffeeMachine.getCoffeeByName(coffeeName);
         coffeeMachine.deleteCoffee(coffee);
+        saveChanges();
     }
 
     // Метод за проверка дали всички нужни съставки за приготвянето на кафе са налични
     public boolean ingredientsAvailable(Coffee coffee) {
         return isEnoughConsumable(Consumables.COFFEE.toString(), coffee.getCoffeeNeeded()) &&
-                (!coffee.hasMilk() || isEnoughConsumable(Consumables.MILK.toString(), milkNeeded)) &&
+                (isEnoughConsumable(Consumables.MILK.toString(), milkNeeded) || !coffee.hasMilk()) &&
                 isEnoughConsumable(Consumables.WATER.toString(), coffee.getWaterNeeded()) &&
                 isEnoughConsumable(Consumables.SUGAR.toString(), coffeeMachine.getSugarSelected());
     }
@@ -85,29 +87,15 @@ public class ControlPanel {
         changeCoinsAmount(coins, true);
     }
 
-    private boolean isEnoughConsumable(String consumableKey, int amountNeeded) {
-        return consumables.getOrDefault(consumableKey, 0) >= amountNeeded;
-    }
-
     // Метод за промяна на стойността на съставка
     public void changePropertiesValue(String property, int amount) {
         if (property.matches("-?\\d+(\\.\\d+)?")) {
             coins.put(property, coins.get(property) + amount);
-            dataHandler.saveCoins(coins);
             updateTotalMoneyAmount();
         } else {
             consumables.put(property, consumables.get(property) + amount);
-            dataHandler.saveConsumables(consumables);
         }
-    }
-
-    // Метод за актуализиране на стойността на парите в една централизирана точка
-    private void updateTotalMoneyAmount() {
-        int totalMoney = coins.entrySet().stream()
-                .mapToInt(entry -> parseCoinAmount(entry.getKey()) * entry.getValue())
-                .sum();
-        consumables.put(Consumables.MONEY.toString(), totalMoney);
-        dataHandler.saveConsumables(consumables);
+        saveChanges();
     }
 
     private void changeCoinsAmount(HashMap<String, Integer> coins, boolean add) {
@@ -118,12 +106,27 @@ public class ControlPanel {
         updateTotalMoneyAmount();
     }
 
+    // Метод за актуализиране на стойността на парите в една централизирана точка
+    private void updateTotalMoneyAmount() {
+        int totalMoney = coins.entrySet()
+                .stream()
+                .mapToInt(entry -> parseCoinAmount(entry.getKey()) * entry.getValue()) // Convert key to int and multiply by value
+                .sum();
+        System.out.println(totalMoney);
+        consumables.put(Consumables.MONEY.toString(), totalMoney);
+        saveChanges();
+    }
+
     private int parseCoinAmount(String coin) {
-        if (coin.length() > 1) {
-            return Integer.parseInt(coin.substring(2));
+        if (coin.contains(".")) {
+            return (int) (Double.parseDouble(coin) * 100);
         } else {
-            return Integer.parseInt(coin) + 100;
+            return Integer.parseInt(coin) * 100;
         }
+    }
+
+    private boolean isEnoughConsumable(String consumableKey, int amountNeeded) {
+        return consumables.getOrDefault(consumableKey, 0) >= amountNeeded;
     }
 
     private void updateConsumable(Consumables consumable, Coffee coffee) {
@@ -134,8 +137,13 @@ public class ControlPanel {
             case SUGAR -> coffeeMachine.getSugarSelected();
             default -> 0;
         };
-
         consumables.put(consumable.toString(), consumables.get(consumable.toString()) - amountToDeduct);
+    }
+
+    private void saveChanges() {
+        dataHandler.saveConsumables(consumables);
+        dataHandler.saveCoffees(coffeeMachine.getCoffees());
+        dataHandler.saveCoins(coins);
     }
 
     // Метод за актуализиране на количествата монети
@@ -197,22 +205,21 @@ public class ControlPanel {
         return calendar.formatDate(calendar.getSelectedDate());
     }
 
-    public HashMap<String, Integer> getStatistics(String date) {
-        return dataHandler.loadStatistic(date);
+    public void changeSelectedStatisticsDate(boolean increment) {
+        if (increment) {
+            calendar.setSelectedDateTomorrow();
+        } else {
+            calendar.setSelectedDateYesterday();
+        }
     }
 
-    public void changeDateForStatistics(boolean increment) {
-        calendar.setSelectedDate(increment ? calendar.calculateYesterday(calendar.getSelectedDate()) : calendar.calculateTomorrow(calendar.getSelectedDate()));
-
+    public HashMap<String, Integer> getStatisticsForDate(String date) {
+        return dataHandler.loadStatistic(date);
     }
 
     public void addCoffeeToDailyStatistics(Coffee coffee) {
         statistics.addCoffeeToDailyStatistic(coffee);
         dataHandler.saveStatistics(statistics.getDailyStatistic());
-    }
-
-    public void saveCoffees(ArrayList<Coffee> coffees) {
-        dataHandler.saveCoffees(coffees);
     }
 
     public String getPassword() {

@@ -37,13 +37,11 @@ public class CoffeeMachine {
     // Метод за добавяне на ново кафе
     public void addNewCoffee(Coffee coffee) {
         coffees.add(coffee);
-        controlPanel.saveCoffees(coffees);
     }
 
     // Метод за изтриване на кафе
     public void deleteCoffee(Coffee coffee) {
         coffees.remove(coffee);
-        controlPanel.saveCoffees(coffees);
     }
 
     // Метод за промяна на количеството захар. Потребителят само решава дали ще увеличава или намалява количеството захар.
@@ -168,7 +166,6 @@ public class CoffeeMachine {
 
     private void updateDailyStatistics(Coffee coffee) {
         controlPanel.addCoffeeToDailyStatistics(coffee);
-
     }
 
     private boolean isCoinAvailable(Nominals nominal) {
@@ -182,10 +179,6 @@ public class CoffeeMachine {
     // get метод за парите, вкарани в кафемашината
     public int getInsertedFunds() {
         return insertedFunds;
-    }
-
-    public ControlPanel getControlPanel() {
-        return controlPanel;
     }
 
     // Метод, който връща масив от имената на всички кафета, които се продават в машината, заедно с техните цени
@@ -204,7 +197,7 @@ public class CoffeeMachine {
     public Coffee getCoffeeByName(String name) {
         return coffees.stream()
                 .filter(coffee -> coffee.getName().equals(name))
-                .findFirst() // Този метод се използва за да се върне само един обект. В противен слу
+                .findFirst() // Този метод се използва за да се върне само един обект
                 .orElse(null);
     }
 
