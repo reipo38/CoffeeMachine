@@ -34,16 +34,6 @@ public class CoffeeMachine {
         coffees = new ArrayList<>();
     }
 
-    // Метод за добавяне на ново кафе
-    public void addCoffee(Coffee coffee) {
-        coffees.add(coffee);
-    }
-
-    // Метод за изтриване на кафе
-    public void removeCoffee(Coffee coffee) {
-        coffees.remove(coffee);
-    }
-
     // Метод за промяна на количеството захар. Потребителят само решава дали ще увеличава или намалява количеството захар.
     // Той не може да определя колко захар да добави, това количество се определя от controlPanel
     public void changeSugarQuantity(boolean increment) {
@@ -77,6 +67,16 @@ public class CoffeeMachine {
             processPurchase(coffee, change);
             updateDailyStatistics(coffee);
         }
+    }
+
+    // Метод за добавяне на ново кафе
+    protected void addCoffee(Coffee coffee) {
+        coffees.add(coffee);
+    }
+
+    // Метод за изтриване на кафе
+    protected void removeCoffee(Coffee coffee) {
+        coffees.remove(coffee);
     }
 
     private void processPurchase(Coffee coffee, HashMap<String, Integer> change) {

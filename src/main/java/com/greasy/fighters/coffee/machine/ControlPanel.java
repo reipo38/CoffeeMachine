@@ -43,7 +43,6 @@ public class ControlPanel {
         this.coffeeMachine = coffeeMachine;
         this.coffeeMachine.setControlPanel(this);
 
-
         calendar = new Calendar();
         dataHandler = new DataHandler(calendar);
         statistics = new Statistics();
@@ -69,24 +68,6 @@ public class ControlPanel {
         saveChanges();
     }
 
-    // Метод за проверка дали всички нужни съставки за приготвянето на кафе са налични
-    public boolean ingredientsAvailable(Coffee coffee) {
-        return isEnoughConsumable(Consumables.COFFEE.toString(), coffee.getCoffeeNeeded()) &&
-                (isEnoughConsumable(Consumables.MILK.toString(), milkNeeded) || !coffee.hasMilk()) &&
-                isEnoughConsumable(Consumables.WATER.toString(), coffee.getWaterNeeded()) &&
-                isEnoughConsumable(Consumables.SUGAR.toString(), coffeeMachine.getSugarSelected());
-    }
-
-    public void updateInventory(Coffee coffee, HashMap<String, Integer> coins) {
-        for (Consumables consumable : Consumables.values()) {
-            if (consumable == Consumables.MONEY) {
-                updateCoinsAmount(coins, true);
-            } else {
-                updateConsumable(consumable, coffee);
-            }
-        }
-    }
-
     // Метод за промяна на стойността на съставка
     public void changePropertiesValue(String property, int amount) {
         if (property.matches("-?\\d+(\\.\\d+)?")) {
@@ -96,6 +77,24 @@ public class ControlPanel {
             consumables.put(property, consumables.get(property) + amount);
         }
         saveChanges();
+    }
+
+    // Метод за проверка дали всички нужни съставки за приготвянето на кафе са налични
+    protected boolean ingredientsAvailable(Coffee coffee) {
+        return isEnoughConsumable(Consumables.COFFEE.toString(), coffee.getCoffeeNeeded()) &&
+                (isEnoughConsumable(Consumables.MILK.toString(), milkNeeded) || !coffee.hasMilk()) &&
+                isEnoughConsumable(Consumables.WATER.toString(), coffee.getWaterNeeded()) &&
+                isEnoughConsumable(Consumables.SUGAR.toString(), coffeeMachine.getSugarSelected());
+    }
+
+    protected void updateInventory(Coffee coffee, HashMap<String, Integer> coins) {
+        for (Consumables consumable : Consumables.values()) {
+            if (consumable == Consumables.MONEY) {
+                updateCoinsAmount(coins, true);
+            } else {
+                updateConsumable(consumable, coffee);
+            }
+        }
     }
 
     private void updateCoinsAmount(HashMap<String, Integer> coins, boolean add) {
@@ -145,39 +144,15 @@ public class ControlPanel {
         dataHandler.saveCoins(coins);
     }
 
-    public void addCoin(Nominals nominal) {
-        changePropertiesValue(nominal.toString(), 1);
-    }
-
-    // Метод за актуализиране на количествата монети
-    public void removeCoins(HashMap<String, Integer> coins) {
-        updateCoinsAmount(coins, false);
-    }
-
     // Метод за получаване на символа за парите
     public String getMoneySymbol() {
         return moneySymbol;
-    }
-
-    // Метод за задаване на максималното количество захар
-    public int getSugarMax() {
-        return sugarMax;
     }
 
     // set метод за задаване на максималното количество захар и автоматично изчисляване на sugarChangeBy
     public void setSugarMax(int sugarMax) {
         this.sugarMax = sugarMax;
         sugarChangeBy = sugarMax / 5; // Захарта се променя с една пета от максималното количество
-    }
-
-    // Метод за получаване на количеството, с което се променя захарта
-    public int getSugarChangeBy() {
-        return sugarChangeBy;
-    }
-
-    // Метод за получаване на количеството мляко, необходимо за приготвяне на кафе с мляко
-    public int getMilkNeeded() {
-        return milkNeeded;
     }
 
     // Метод за задаване на количеството мляко, необходимо за приготвяне на кафе с мляко
@@ -192,11 +167,6 @@ public class ControlPanel {
 
     public int getCoinAmount(String coinNominal) {
         return coins.get(coinNominal);
-    }
-
-    // Метод за получаване на монетите по номинали
-    public HashMap<String, Integer> getCoins() {
-        return coins;
     }
 
     // Метод за получаване на имената на наличните кафета
@@ -220,12 +190,41 @@ public class ControlPanel {
         return dataHandler.loadStatistic();
     }
 
-    public void addCoffeeToDailyStatistics(Coffee coffee) {
-        statistics.addCoffeeToDailyStatistic(coffee);
-        dataHandler.saveStatistics(statistics.getDailyStatistic());
-    }
-
     public String getPassword() {
         return dataHandler.getPassword();
+    }
+
+    // Метод за получаване на количеството, с което се променя захарта
+    protected int getSugarChangeBy() {
+        return sugarChangeBy;
+    }
+
+    // Метод за задаване на максималното количество захар
+    protected int getSugarMax() {
+        return sugarMax;
+    }
+
+    // Метод за получаване на количеството мляко, необходимо за приготвяне на кафе с мляко
+    protected int getMilkNeeded() {
+        return milkNeeded;
+    }
+
+    protected void addCoin(Nominals nominal) {
+        changePropertiesValue(nominal.toString(), 1);
+    }
+
+    // Метод за актуализиране на количествата монети
+    protected void removeCoins(HashMap<String, Integer> coins) {
+        updateCoinsAmount(coins, false);
+    }
+
+    // Метод за получаване на монетите по номинали
+    protected HashMap<String, Integer> getCoins() {
+        return coins;
+    }
+
+    protected void addCoffeeToDailyStatistics(Coffee coffee) {
+        statistics.addCoffeeToDailyStatistic(coffee);
+        dataHandler.saveStatistics(statistics.getDailyStatistic());
     }
 }
