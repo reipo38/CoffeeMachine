@@ -13,5 +13,5 @@ Java OOP project simulating a fully functional coffee machine, allowing users to
 * <strike>Irish Coffee plsss</strike>
 
 ## Bugs
-* </strike>Consumables and coins can go negative</strike>
+* <strike>Consumables and coins can go negative</strike>
 * <strike>the coin amounts in the controlPanel are totally screwed up</strike>
